@@ -27,3 +27,12 @@ coverage
 .env
 .env.localdmt-education-*.json
 .vercel
+client_secret.json
+credentials.json
+google-credentials.json
+secrets.json
+node_modules/
+Backend/node_modules/
+Backend/.env
+Backend/.env.local
+Backend/.env.development.local
