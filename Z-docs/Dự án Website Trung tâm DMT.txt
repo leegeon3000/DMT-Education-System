@@ -214,3 +214,15 @@ start-dev.sh	Start tất cả services (SQL Server + Backend + Frontend)
 stop-dev.sh	Dừng tất cả development servers
 status-dev.sh	Kiểm tra trạng thái services
 CREDENTIALS.md	Danh sách đầy đủ tài khoản demo
+
+cd /Users/nguyenhuuthang/Documents/RepoGitHub/dmt-edu-ui && chmod +x scripts/start-dev.sh && ./scripts/start-dev.sh
+
+
+#bfbfbfff
+#F2F2F2
+#D9D9D9
+
+#0A1A2F
+
+#001F3F
+rgb(1, 170, 211)

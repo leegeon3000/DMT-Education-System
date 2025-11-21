@@ -211,7 +211,7 @@ export async function studentsRoutes(app: FastifyInstance) {
       const userUpdates = { email, full_name, phone, address, birth_date, status };
 
       // Update user table if there are user fields to update
-      if (Object.keys(userUpdates).some(key => userUpdates[key] !== undefined)) {
+      if (Object.keys(userUpdates).some(key => userUpdates[key as keyof typeof userUpdates] !== undefined)) {
         const filteredUserUpdates = Object.fromEntries(
           Object.entries(userUpdates).filter(([_, value]) => value !== undefined)
         );

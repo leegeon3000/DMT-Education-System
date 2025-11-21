@@ -4,7 +4,7 @@
 git add .
 git commit -m "feat: Nâng cấp hoàn toàn module giảng viên với database integration
 
-✨ Features:
+ Features:
 - Thêm trang danh sách giảng viên đầy đủ (/teachers/list)
 - Thêm trang chi tiết giảng viên (/teachers/:id)
 - Tích hợp database cho tất cả trang giảng viên
@@ -132,7 +132,7 @@ feat: Nâng cấp module giảng viên với database integration & UI mới
 ## 🎯 Mục đích
 Nâng cấp hoàn toàn module giảng viên với tích hợp database và giao diện hiện đại.
 
-## ✨ Tính năng mới
+##  Tính năng mới
 - Trang danh sách giảng viên với search, filter, pagination
 - Trang chi tiết giảng viên với 3 tabs (Tổng quan, Lớp học, Hiệu suất)
 - Tích hợp database thực cho tất cả trang
