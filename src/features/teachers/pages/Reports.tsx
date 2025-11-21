@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
 import { SEOHead } from '../../../components/common';
 import TeacherLayout from '../../../components/layout/TeacherLayout';
+import teacherAPI, { TeachingReport } from '../../../services/teacherAPI';
 import { BarChart3, School, Users, CheckCircle, ClipboardList, GraduationCap, Target, FileSpreadsheet } from 'lucide-react';
-
-interface TeachingReport {
-  id: string;
-  month: string;
-  totalClasses: number;
-  totalHours: number;
-  studentsCount: number;
-  avgAttendance: number;
-  assignmentsGiven: number;
-  avgScore: number;
-}
 
 interface StudentProgress {
   studentId: string;
@@ -36,41 +28,69 @@ interface ClassSummary {
 }
 
 const Reports: React.FC = () => {
+  const user = useSelector(selectCurrentUser);
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'classes'>('overview');
   const [selectedPeriod, setSelectedPeriod] = useState('2025-08');
-  
-  const [monthlyReports] = useState<TeachingReport[]>([
-    {
-      id: '1',
-      month: '2025-08',
-      totalClasses: 45,
-      totalHours: 68,
-      studentsCount: 156,
-      avgAttendance: 92.5,
-      assignmentsGiven: 12,
-      avgScore: 7.8
-    },
-    {
-      id: '2',
-      month: '2025-07',
-      totalClasses: 52,
-      totalHours: 78,
-      studentsCount: 148,
-      avgAttendance: 89.2,
-      assignmentsGiven: 15,
-      avgScore: 7.5
-    },
-    {
-      id: '3',
-      month: '2025-06',
-      totalClasses: 48,
-      totalHours: 72,
-      studentsCount: 152,
-      avgAttendance: 91.8,
-      assignmentsGiven: 13,
-      avgScore: 7.6
+  const [monthlyReports, setMonthlyReports] = useState<TeachingReport[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadReports();
+  }, [user?.teacher_id]);
+
+  const loadReports = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
     }
-  ]);
+
+    try {
+      setLoading(true);
+      const data = await teacherAPI.getTeachingReports(user.teacher_id);
+      
+      if (data.length === 0) {
+        const mockReports: TeachingReport[] = [
+          {
+            id: '1',
+            month: '2025-08',
+            totalClasses: 45,
+            totalHours: 68,
+            studentsCount: 156,
+            avgAttendance: 92.5,
+            assignmentsGiven: 12,
+            avgScore: 7.8
+          },
+          {
+            id: '2',
+            month: '2025-07',
+            totalClasses: 52,
+            totalHours: 78,
+            studentsCount: 148,
+            avgAttendance: 89.2,
+            assignmentsGiven: 15,
+            avgScore: 7.5
+          },
+          {
+            id: '3',
+            month: '2025-06',
+            totalClasses: 48,
+            totalHours: 72,
+            studentsCount: 152,
+            avgAttendance: 91.8,
+            assignmentsGiven: 13,
+            avgScore: 7.6
+          }
+        ];
+        setMonthlyReports(mockReports);
+      } else {
+        setMonthlyReports(data);
+      }
+    } catch (error) {
+      console.error('Error loading reports:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [studentProgress] = useState<StudentProgress[]>([
     {

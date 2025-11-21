@@ -309,6 +309,20 @@ export const reportsAPI = {
     return response.data.data;
   },
 
+  getRecentEnrollments: async (limit: number = 7) => {
+    const response = await apiClient.get('/enrollments', { 
+      params: { limit, page: 1, sort: 'created_at', order: 'desc' } 
+    });
+    return response.data;
+  },
+
+  getTopCourses: async (limit: number = 5) => {
+    const response = await apiClient.get('/classes', { 
+      params: { limit, page: 1, sort: 'current_students', order: 'desc', status: 'active' } 
+    });
+    return response.data;
+  },
+
   getAttendanceRate: async (studentId: number, classId?: number) => {
     const params = classId ? { student_id: studentId, class_id: classId } : { student_id: studentId };
     const response = await apiClient.get('/reports/attendance-rate', { params });

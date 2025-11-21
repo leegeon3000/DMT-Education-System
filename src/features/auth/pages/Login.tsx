@@ -13,7 +13,7 @@ import {
 import authService from '../../../services/auth';
 import { login as loginAction } from '../../../store/slices/userSlice';
 import { Role } from '../../../types';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ArrowLeft } from 'lucide-react';
 
 // Types
 interface LoginResponse {
@@ -204,13 +204,13 @@ const Login: React.FC = () => {
           userRole = Role.ADMIN;
           break;
         case 2:
-          userRole = Role.TEACHER;
+          userRole = Role.STAFF;
           break;
         case 3:
-          userRole = Role.STUDENT;
+          userRole = Role.TEACHER;
           break;
         case 4:
-          userRole = Role.STUDENT; // Parent see student dashboard
+          userRole = Role.STUDENT;
           break;
         default:
           userRole = Role.STUDENT;
@@ -237,26 +237,24 @@ const Login: React.FC = () => {
 
       setSuccess(true);
 
-      // Redirect based on user role - reduced delay for faster UX
-      setTimeout(() => {
-        console.log('🎯 Navigating to dashboard...');
-        switch (data.user.role_id) {
-          case 1: // Admin
-            navigate('/admin/dashboard');
-            break;
-          case 2: // Teacher
-            navigate('/teacher/dashboard');
-            break;
-          case 3: // Student
-            navigate('/students/dashboard');
-            break;
-          case 4: // Parent
-            navigate('/students/dashboard'); // Parents see student dashboard
-            break;
-          default:
-            navigate('/');
-        }
-      }, 300);
+      // Redirect immediately for faster UX
+      console.log('🎯 Navigating to dashboard...');
+      switch (data.user.role_id) {
+        case 1: // Admin
+          navigate('/admin/dashboard');
+          break;
+        case 2: // Staff
+          navigate('/staff/dashboard');
+          break;
+        case 3: // Teacher
+          navigate('/teacher/dashboard');
+          break;
+        case 4: // Student
+          navigate('/students/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
     } catch (err: any) {
       const errorTime = performance.now() - loginStartTime;
       console.error(`❌ Login failed after ${errorTime.toFixed(0)}ms`, err);
@@ -406,6 +404,49 @@ const Login: React.FC = () => {
           opacity: 0.7,
         }}
       />
+
+      {/* Back to Home Button */}
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate('/')}
+        style={{
+          position: 'absolute',
+          top: SPACING['2xl'],
+          left: SPACING['2xl'],
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: SPACING.sm,
+          padding: `${SPACING.sm} ${SPACING.md}`,
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${COLORS.neutral.gray200}`,
+          borderRadius: BORDERS.radius.lg,
+          color: COLORS.neutral.gray700,
+          fontSize: TYPOGRAPHY.fontSize.sm,
+          fontWeight: TYPOGRAPHY.fontWeight.medium,
+          cursor: 'pointer',
+          boxShadow: SHADOWS.sm,
+          transition: EFFECTS.transition.normal,
+        }}
+        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+          e.currentTarget.style.borderColor = COLORS.primary.main;
+          e.currentTarget.style.color = COLORS.primary.main;
+        }}
+        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+          e.currentTarget.style.borderColor = COLORS.neutral.gray200;
+          e.currentTarget.style.color = COLORS.neutral.gray700;
+        }}
+      >
+        <ArrowLeft size={18} />
+        Về trang chủ
+      </motion.button>
 
       <div
         style={{

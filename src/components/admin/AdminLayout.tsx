@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   User,
-  ChevronDown
+  ChevronDown,
+  Home
 } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import { NotificationBell } from '../notifications';
@@ -24,6 +25,7 @@ const AdminLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const auth = useAuth();
   
   // Mock user data for now
@@ -97,8 +99,8 @@ const AdminLayout: React.FC = () => {
 
   const handleLogout = async () => {
     await auth.handleLogout();
-    // Redirect to login page
-    window.location.href = '/auth/login';
+    // Redirect to login
+    navigate('/auth/login');
   };
 
   return (
@@ -185,6 +187,16 @@ const AdminLayout: React.FC = () => {
 
             {userMenuOpen && (
               <div className="absolute bottom-full left-4 right-4 mb-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+                <button
+                  onClick={() => {
+                    navigate('/');
+                    setUserMenuOpen(false);
+                  }}
+                  className="flex items-center w-full px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors border-b border-slate-700"
+                >
+                  <Home className="w-4 h-4 mr-3 text-blue-400" />
+                  <span>Trở lại trang chủ</span>
+                </button>
                 <button
                   onClick={handleLogout}
                   className="flex items-center w-full px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"

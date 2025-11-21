@@ -16,7 +16,7 @@ import {
   Grid3x3,
   List,
   X,
-  Star,
+
   TrendingUp,
   Award
 } from 'lucide-react';
@@ -110,7 +110,7 @@ const SchedulePage: React.FC = () => {
       id: 3,
       course_id: 3,
       code: 'CODE-TB-01',
-      name: 'Lập trình Junior',
+      name: 'Hóa học nâng cao',
       teacher_id: 3,
       capacity: 12,
       current_students: 10,
@@ -200,104 +200,138 @@ const SchedulePage: React.FC = () => {
       />
       
       <Layout>
+        <div style={{ background: '#ffffff', minHeight: '100vh' }}>
         {/* Hero Section */}
-        <div style={{
-          background: '#ffffff',
-          padding: '60px 1rem 40px',
-          borderBottom: '1px solid #e5e7eb'
+        <section style={{
+          position: 'relative',
+          padding: '48px 20px',
+          background: 'linear-gradient(135deg, #dc2626 0%, #f43f5e 50%, #ec4899 100%)',
+          overflow: 'hidden'
         }}>
+          {/* Decorative elements */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.1
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+          </div>
+
           <div style={{
             maxWidth: '1200px',
-            margin: '0 auto'
+            margin: '0 auto',
+            position: 'relative',
+            zIndex: 10
           }}>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', color: 'white' }}>
               <div style={{
-                display: 'inline-block',
-                background: '#f3f4f6',
-                color: '#374151',
-                padding: '8px 20px',
-                borderRadius: '8px',
-                marginBottom: '20px',
-                fontSize: '14px',
-                fontWeight: '600'
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '6px 12px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '9999px',
+                marginBottom: '16px'
               }}>
-                <Calendar size={16} style={{ display: 'inline', marginRight: '8px', marginBottom: '-2px' }} />
-                Lịch khai giảng 2025
+                <Calendar size={16} style={{ marginRight: '6px' }} />
+                <span style={{ fontSize: '12px', fontWeight: '600' }}>{filteredClasses.length}+ lớp học</span>
               </div>
               
               <h1 style={{
-                fontSize: '42px',
-                fontWeight: '800',
+                fontSize: '36px',
+                fontWeight: '700',
                 marginBottom: '16px',
-                lineHeight: '1.2',
-                color: '#111827'
+                lineHeight: '1.2'
               }}>
                 Lịch học & Khai giảng
               </h1>
-              
               <p style={{
-                fontSize: '17px',
-                color: '#6b7280',
-                maxWidth: '700px',
-                margin: '0 auto 40px',
+                fontSize: '16px',
+                opacity: 0.9,
+                maxWidth: '640px',
+                margin: '0 auto 24px',
                 lineHeight: '1.6'
               }}>
-                Xem lịch khai giảng và thời khóa biểu các khóa học tại tất cả cơ sở DMT Education
+                Xem lịch khai giảng và thời khóa biểu các khóa học tại tất cả cơ sở
               </p>
 
-              {/* Quick stats */}
+              {/* Search bar */}
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-                gap: '20px',
-                maxWidth: '800px',
+                maxWidth: '768px',
                 margin: '0 auto'
               }}>
-                <div style={{
-                  background: '#f9fafb',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '5px', color: '#111827' }}>
-                    {filteredClasses.length}
-                  </div>
-                  <div style={{ fontSize: '14px', color: '#6b7280' }}>Lớp học</div>
-                </div>
-                <div style={{
-                  background: '#f9fafb',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '5px', color: '#111827' }}>3</div>
-                  <div style={{ fontSize: '14px', color: '#6b7280' }}>Cơ sở</div>
-                </div>
-                <div style={{
-                  background: '#f9fafb',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '5px', color: '#111827' }}>15+</div>
-                  <div style={{ fontSize: '14px', color: '#6b7280' }}>Khóa học</div>
-                </div>
-                <div style={{
-                  background: '#f9fafb',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e7eb'
-                }}>
-                  <div style={{ fontSize: '32px', fontWeight: '800', marginBottom: '5px', color: '#111827' }}>98%</div>
-                  <div style={{ fontSize: '14px', color: '#6b7280' }}>Lấp đầy</div>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm lớp học..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 48px 12px 48px',
+                      background: 'white',
+                      borderRadius: '12px',
+                      color: '#111827',
+                      outline: 'none',
+                      border: 'none',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }}
+                  />
+                  <Search 
+                    size={20} 
+                    style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#9ca3af'
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      style={{
+                        position: 'absolute',
+                        right: '16px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#9ca3af',
+                        padding: '4px'
+                      }}
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Main Content */}
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 1rem', background: '#ffffff' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '40px 1rem' }}>
           {/* Filters & Controls */}
           <div style={{
             background: '#ffffff',
@@ -589,7 +623,7 @@ const SchedulePage: React.FC = () => {
                         minHeight: '100px',
                         padding: '10px',
                         borderRadius: '8px',
-                        background: isToday ? '#3b82f6' : '#f9fafb',
+                        background: isToday ? '#01AAD3' : '#f9fafb',
                         border: isToday ? 'none' : '1px solid #e5e7eb',
                         transition: 'all 0.2s',
                         cursor: 'pointer'
@@ -884,7 +918,7 @@ const SchedulePage: React.FC = () => {
                   padding: '14px 28px',
                   borderRadius: '8px',
                   border: 'none',
-                  background: '#3b82f6',
+                  background: '#01AAD3',
                   color: 'white',
                   fontWeight: '600',
                   fontSize: '15px',
@@ -892,11 +926,11 @@ const SchedulePage: React.FC = () => {
                   transition: 'all 0.2s'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#2563eb';
+                  e.currentTarget.style.background = '#018AB0';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#3b82f6';
+                  e.currentTarget.style.background = '#01AAD3';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -932,6 +966,7 @@ const SchedulePage: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </Layout>
     </>

@@ -1,51 +1,70 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
 import { Plus, Search, Download, Edit, Trash2, FileText, Upload, Video, Image, File, Paperclip, BookOpen, Calendar, Folder } from 'lucide-react';
 import { SEOHead } from '../../../components/common';
 import TeacherLayout from '../../../components/layout/TeacherLayout';
-
-interface Material {
-  id: string;
-  title: string;
-  description: string;
-  type: 'pdf' | 'video' | 'image' | 'document';
-  fileName: string;
-  fileSize: string;
-  uploadedAt: string;
-  downloadCount: number;
-  status: 'active' | 'inactive';
-  subject: string;
-  grade: string;
-}
+import teacherAPI, { Material } from '../../../services/teacherAPI';
 
 const Materials: React.FC = () => {
-  const [materials, setMaterials] = useState<Material[]>([
-    {
-      id: '1',
-      title: 'Bài giảng Toán học - Chương 1',
-      description: 'Căn bản về phương trình bậc hai',
-      type: 'pdf',
-      fileName: 'toan-chuong1.pdf',
-      fileSize: '2.5 MB',
-      uploadedAt: '2025-08-10T10:00:00',
-      downloadCount: 45,
-      status: 'active',
-      subject: 'Toán học',
-      grade: '10'
-    },
-    {
-      id: '2',
-      title: 'Video bài giảng Vật lý',
-      description: 'Chuyển động thẳng đều',
-      type: 'video',
-      fileName: 'vatly-chuyen-dong.mp4',
-      fileSize: '125 MB',
-      uploadedAt: '2025-08-12T14:30:00',
-      downloadCount: 32,
-      status: 'active',
-      subject: 'Vật lý',
-      grade: '10'
+  const user = useSelector(selectCurrentUser);
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadMaterials();
+  }, [user?.teacher_id]);
+
+  const loadMaterials = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
     }
-  ]);
+
+    try {
+      setLoading(true);
+      const data = await teacherAPI.getMaterials(user.teacher_id);
+      
+      // Use API data or fallback to mock
+      if (data.length === 0) {
+        const mockMaterials: Material[] = [
+          {
+            id: '1',
+            title: 'Bài giảng Toán học - Chương 1',
+            description: 'Căn bản về phương trình bậc hai',
+            type: 'pdf',
+            fileName: 'toan-chuong1.pdf',
+            fileSize: '2.5 MB',
+            uploadedAt: '2025-08-10T10:00:00',
+            downloadCount: 45,
+            status: 'active',
+            subject: 'Toán học',
+            grade: '10'
+          },
+          {
+            id: '2',
+            title: 'Video bài giảng Vật lý',
+            description: 'Chuyển động thẳng đều',
+            type: 'video',
+            fileName: 'vatly-chuyen-dong.mp4',
+            fileSize: '125 MB',
+            uploadedAt: '2025-08-12T14:30:00',
+            downloadCount: 32,
+            status: 'active',
+            subject: 'Vật lý',
+            grade: '10'
+          }
+        ];
+        setMaterials(mockMaterials);
+      } else {
+        setMaterials(data);
+      }
+    } catch (error) {
+      console.error('Error loading materials:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadForm, setUploadForm] = useState({

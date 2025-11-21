@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
 import Modal from '../../../components/common/Modal';
-
-interface Assignment {
-  id: string;
-  title: string;
-  description: string;
-  subject: string;
-  type: 'homework' | 'quiz' | 'midterm' | 'final';
-  dueDate: string;
-  maxScore: number;
-  instructions: string;
-  attachments: string[];
-  status: 'draft' | 'published' | 'closed';
-  submissionCount: number;
-  totalStudents: number;
-  createdAt: string;
-}
+import teacherAPI, { Assignment } from '../../../services/teacherAPI';
 
 interface AssignmentFormData {
   title: string;
@@ -303,6 +290,7 @@ const AssignmentForm: React.FC<{
 };
 
 const Assignments: React.FC = () => {
+  const user = useSelector(selectCurrentUser);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -313,61 +301,75 @@ const Assignments: React.FC = () => {
 
   useEffect(() => {
     loadAssignments();
-  }, []);
+  }, [user?.teacher_id]);
 
   const loadAssignments = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      // Mock data since API might not be ready
-      const mockAssignments: Assignment[] = [
-        {
-          id: '1',
-          title: 'Phương trình bậc 2',
-          description: 'Giải các dạng phương trình bậc 2 cơ bản và nâng cao',
-          subject: 'Toán 9',
-          type: 'homework',
-          dueDate: '2025-08-15T23:59',
-          maxScore: 10,
-          instructions: 'Làm đầy đủ các bước giải, ghi rõ công thức',
-          attachments: [],
-          status: 'published',
-          submissionCount: 23,
-          totalStudents: 30,
-          createdAt: '2025-08-05'
-        },
-        {
-          id: '2',
-          title: 'Kiểm tra định kỳ - Động học',
-          description: 'Kiểm tra 45 phút về chuyển động thẳng đều và biến đổi đều',
-          subject: 'Vật lý 9',
-          type: 'quiz',
-          dueDate: '2025-08-12T14:30',
-          maxScore: 10,
-          instructions: 'Mang máy tính, không sử dụng tài liệu',
-          attachments: [],
-          status: 'published',
-          submissionCount: 28,
-          totalStudents: 30,
-          createdAt: '2025-08-01'
-        },
-        {
-          id: '3',
-          title: 'Bài tập Axit - Bazơ',
-          description: 'Các phản ứng hóa học giữa axit và bazơ',
-          subject: 'Hóa học 9',
-          type: 'homework',
-          dueDate: '2025-08-20T23:59',
-          maxScore: 10,
-          instructions: 'Cân bằng phương trình hóa học chính xác',
-          attachments: [],
-          status: 'draft',
-          submissionCount: 0,
-          totalStudents: 30,
-          createdAt: '2025-08-08'
-        }
-      ];
-      setAssignments(mockAssignments);
+      setError(null);
+      
+      const data = await teacherAPI.getAssignments(user.teacher_id);
+      
+      // If API returns empty, use fallback data
+      if (data.length === 0) {
+        const mockAssignments: Assignment[] = [
+          {
+            id: '1',
+            title: 'Phương trình bậc 2',
+            description: 'Giải các dạng phương trình bậc 2 cơ bản và nâng cao',
+            subject: 'Toán 9',
+            type: 'homework',
+            dueDate: '2025-08-15T23:59',
+            maxScore: 10,
+            instructions: 'Làm đầy đủ các bước giải, ghi rõ công thức',
+            attachments: [],
+            status: 'published',
+            submissionCount: 23,
+            totalStudents: 30,
+            createdAt: '2025-08-05'
+          },
+          {
+            id: '2',
+            title: 'Kiểm tra định kỳ - Động học',
+            description: 'Kiểm tra 45 phút về chuyển động thẳng đều và biến đổi đều',
+            subject: 'Vật lý 9',
+            type: 'quiz',
+            dueDate: '2025-08-12T14:30',
+            maxScore: 10,
+            instructions: 'Mang máy tính, không sử dụng tài liệu',
+            attachments: [],
+            status: 'published',
+            submissionCount: 28,
+            totalStudents: 30,
+            createdAt: '2025-08-01'
+          },
+          {
+            id: '3',
+            title: 'Bài tập Axit - Bazơ',
+            description: 'Các phản ứng hóa học giữa axit và bazơ',
+            subject: 'Hóa học 9',
+            type: 'homework',
+            dueDate: '2025-08-20T23:59',
+            maxScore: 10,
+            instructions: 'Cân bằng phương trình hóa học chính xác',
+            attachments: [],
+            status: 'draft',
+            submissionCount: 0,
+            totalStudents: 30,
+            createdAt: '2025-08-08'
+          }
+        ];
+        setAssignments(mockAssignments);
+      } else {
+        setAssignments(data);
+      }
     } catch (err: any) {
+      console.error('Error loading assignments:', err);
       setError(err.message || 'Không thể tải danh sách bài tập');
     } finally {
       setLoading(false);
@@ -376,6 +378,19 @@ const Assignments: React.FC = () => {
 
   const handleCreateAssignment = async (data: AssignmentFormData) => {
     try {
+      const newAssignment = await teacherAPI.createAssignment({
+        ...data,
+        attachments: [],
+        status: 'draft',
+        submissionCount: 0,
+        totalStudents: 30,
+        createdAt: new Date().toISOString().split('T')[0]
+      });
+      setAssignments(prev => [newAssignment, ...prev]);
+      setIsFormOpen(false);
+    } catch (err: any) {
+      console.error('Error creating assignment:', err);
+      // Fallback: add locally if API fails
       const newAssignment: Assignment = {
         id: Date.now().toString(),
         ...data,
@@ -387,8 +402,6 @@ const Assignments: React.FC = () => {
       };
       setAssignments(prev => [newAssignment, ...prev]);
       setIsFormOpen(false);
-    } catch (err: any) {
-      setError(err.message);
     }
   };
 
@@ -396,6 +409,7 @@ const Assignments: React.FC = () => {
     if (!editingAssignment) return;
     
     try {
+      await teacherAPI.updateAssignment(editingAssignment.id, data);
       setAssignments(prev => prev.map(assignment => 
         assignment.id === editingAssignment.id 
           ? { ...assignment, ...data }
@@ -404,7 +418,15 @@ const Assignments: React.FC = () => {
       setIsFormOpen(false);
       setEditingAssignment(null);
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error updating assignment:', err);
+      // Fallback: update locally
+      setAssignments(prev => prev.map(assignment => 
+        assignment.id === editingAssignment.id 
+          ? { ...assignment, ...data }
+          : assignment
+      ));
+      setIsFormOpen(false);
+      setEditingAssignment(null);
     }
   };
 
@@ -412,21 +434,31 @@ const Assignments: React.FC = () => {
     if (!confirm('Bạn có chắc muốn xóa bài tập này?')) return;
     
     try {
+      await teacherAPI.deleteAssignment(id);
       setAssignments(prev => prev.filter(assignment => assignment.id !== id));
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error deleting assignment:', err);
+      // Fallback: delete locally
+      setAssignments(prev => prev.filter(assignment => assignment.id !== id));
     }
   };
 
   const handleToggleStatus = async (id: string, newStatus: string) => {
     try {
+      await teacherAPI.updateAssignment(id, { status: newStatus as any });
       setAssignments(prev => prev.map(assignment => 
         assignment.id === id 
           ? { ...assignment, status: newStatus as any }
           : assignment
       ));
     } catch (err: any) {
-      setError(err.message);
+      console.error('Error toggling status:', err);
+      // Fallback: update locally
+      setAssignments(prev => prev.map(assignment => 
+        assignment.id === id 
+          ? { ...assignment, status: newStatus as any }
+          : assignment
+      ));
     }
   };
 

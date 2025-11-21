@@ -25,7 +25,7 @@ import {
 interface TeacherPerformance {
   total_classes: number;
   total_students: number;
-  average_rating: number;
+
   attendance_rate: number;
 }
 
@@ -671,35 +671,6 @@ const TeacherDetailPage: React.FC = () => {
                       </div>
                     </div>
                     <div style={{ fontSize: '14px', opacity: 0.9 }}>Tổng số học sinh</div>
-                  </div>
-
-                  {/* Average Rating */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    color: 'white',
-                    boxShadow: '0 8px 20px rgba(245, 158, 11, 0.3)',
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '12px',
-                    }}>
-                      <Star size={32} style={{ opacity: 0.9 }} />
-                      <div style={{
-                        fontSize: '32px',
-                        fontWeight: '800',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}>
-                        {performance.average_rating.toFixed(1)}
-                        <span style={{ fontSize: '18px', opacity: 0.8 }}>/5</span>
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '14px', opacity: 0.9 }}>Đánh giá trung bình</div>
                   </div>
 
                   {/* Attendance Rate */}

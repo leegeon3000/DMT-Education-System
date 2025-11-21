@@ -131,6 +131,126 @@ const AboutSection: React.FC = () => {
         </div>
       </section>
 
+      {/* Image Showcase - Học sinh và giáo viên */}
+      <section style={{
+        padding: '80px 20px',
+        background: 'white'
+      }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px',
+            marginBottom: '40px'
+          }}>
+            {/* Image 1 - Học sinh hoạt động */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              height: '500px'
+            }}>
+              <img
+                src="/images/ANH-HOC-SINH/DMT-25-38.jpg"
+                alt="Học sinh DMT đạt thành tích xuất sắc"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                  transition: 'transform 0.5s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '20px',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                color: 'white'
+              }}>
+                <p style={{ fontWeight: '600', fontSize: '1.1rem' }}>Học sinh xuất sắc</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Thành tích ấn tượng</p>
+              </div>
+            </div>
+
+            {/* Image 2 - Giáo viên */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              height: '500px'
+            }}>
+              <img
+                src="/images/ANH-GV/DMT-25-21.png"
+                alt="Giáo viên DMT Education tận tâm"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                  transition: 'transform 0.5s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '20px',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                color: 'white'
+              }}>
+                <p style={{ fontWeight: '600', fontSize: '1.1rem' }}>Đội ngũ giáo viên</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Chuyên nghiệp & tận tâm</p>
+              </div>
+            </div>
+
+            {/* Image 3 - Hoạt động học tập */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              height: '500px'
+            }}>
+              <img
+                src="/images/ANH-HOC-SINH/DMT-25-29.jpg"
+                alt="Học sinh tham gia hoạt động nhóm"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transition: 'transform 0.5s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '20px',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                color: 'white'
+              }}>
+                <p style={{ fontWeight: '600', fontSize: '1.1rem' }}>Hoạt động nhóm</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.9 }}>Học tập hiệu quả</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Vision, Mission, Values */}
       <section style={{
         padding: '80px 20px',

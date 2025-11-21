@@ -1,8 +1,6 @@
 // Section Components Exports - Only actively used components
-export { default as HeaderComponent } from './HeaderComponent';
 export { default as AnnouncementBanner } from './AnnouncementBanner';
 export { default as Hero } from './Hero';
-export { default as Footer } from './Footer';
 
 // Main page sections
 export { default as AboutSection } from './AboutSection';
@@ -13,11 +11,5 @@ export { default as NewsSection } from './NewsSection';
 export { default as AchievementsSection } from './AchievementsSection';
 export { default as ContactSection } from './ContactSection';
 
-// Temporarily disabled - not used
-// export { default as SponsorsSection } from './SponsorsSection';
-
-// Note: These files exist but are duplicates/alternatives to the ones being used:
-// - HeroSection.tsx (duplicate of Hero.tsx - Hero.tsx is used)
-// - HeaderSection.tsx (duplicate of HeaderComponent.tsx - HeaderComponent.tsx is used)  
-// - FooterSection.tsx (duplicate of Footer.tsx - Footer.tsx is used)
-// Consider removing duplicate files to avoid confusion
+// Note: Old Footer.tsx, HeaderComponent.tsx, and App.tsx have been removed
+// Now using ModernHeader.tsx and ModernFooter.tsx in Layout.tsx

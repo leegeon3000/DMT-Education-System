@@ -79,7 +79,7 @@ const getDashboardPath = (role: Role | null): string => {
         case Role.STUDENT:
             return '/students/dashboard';
         case Role.STAFF:
-            return '/staff/tasks';
+            return '/staff/dashboard';
         default:
             return '/';
     }

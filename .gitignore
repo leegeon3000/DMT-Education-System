@@ -28,6 +28,7 @@ coverage
 .env.localdmt-education-*.json
 .vercel
 client_secret.json
+client_secret_*.json
 credentials.json
 google-credentials.json
 secrets.json

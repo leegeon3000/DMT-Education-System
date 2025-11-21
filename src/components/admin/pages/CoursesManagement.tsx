@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Plus, Search, Filter, Edit, Trash2, Eye, Users, Calendar, DollarSign, Clock, Star } from 'lucide-react';
+import { BookOpen, Plus, Search, Filter, Edit, Trash2, Eye, Users, Calendar, DollarSign, Clock } from 'lucide-react';
 import AdminLayout from '../AdminLayoutNew';
 import adminService, { Course } from '../../../services/admin';
 import CourseModal from './CourseModal';
@@ -418,10 +418,6 @@ const CoursesManagement: React.FC = () => {
 
                 {/* Actions */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-gray-600">4.8 (24 đánh giá)</span>
-                  </div>
                   <div className="flex space-x-2">
                     <button 
                       onClick={() => handleViewCourse(course)}

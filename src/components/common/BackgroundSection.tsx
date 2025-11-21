@@ -144,13 +144,13 @@ export const GradientBackground: React.FC<{
 // Predefined background configurations for different sections
 export const SECTION_BACKGROUNDS = {
   hero: {
-    image: '/images/ẢNH-GV/DMT-25-14.jpg', 
+    image: '/images/ANH-GV/DMT-25-14.jpg', 
     overlay: true,
     overlayColor: 'rgba(59, 130, 246, 0.8)', // Blue overlay
     parallax: true
   },
   about: {
-    image: '/images/ẢNH-HỌC-SINH/DMT-25-23.jpg',
+    image: '/images/ANH-HOC-SINH/DMT-25-23.jpg',
     overlay: true,
     overlayColor: 'rgba(16, 185, 129, 0.7)', // Green overlay
     parallax: false
@@ -166,7 +166,7 @@ export const SECTION_BACKGROUNDS = {
     parallax: true
   },
   contact: {
-    image: '/images/ẢNH-HỌC-SINH/DMT-25-26_1.jpg',
+    image: '/images/ANH-HOC-SINH/DMT-25-26_1.jpg',
     overlay: true,
     overlayColor: 'rgba(255, 255, 255, 1)', // Light overlay
     parallax: false

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getGradingData } from '../api';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
+import teacherAPI from '../../../services/teacherAPI';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
@@ -226,6 +228,7 @@ const GradingModal: React.FC<{
 };
 
 const Grading: React.FC = () => {
+  const user = useSelector(selectCurrentUser);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [submissions, setSubmissions] = useState<StudentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -236,13 +239,25 @@ const Grading: React.FC = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [user?.teacher_id]);
 
   const loadData = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      // Mock data since API might not be ready
-      const mockAssignments: Assignment[] = [
+      
+      // Load data from API with fallback
+      const assignmentsData = await teacherAPI.getAssignments(user.teacher_id).catch(() => []);
+      const pendingData = await teacherAPI.getPendingGrading(user.teacher_id).catch(() => []);
+
+      // Use API data or fallback to mock
+      if (assignmentsData.length === 0 && pendingData.length === 0) {
+        // Mock data fallback
+        const mockAssignments: Assignment[] = [
         {
           id: '1',
           title: 'Phương trình bậc 2',
@@ -322,7 +337,34 @@ const Grading: React.FC = () => {
 
       setAssignments(mockAssignments);
       setSubmissions(mockSubmissions);
+      } else {
+        // Use API data
+        setAssignments(assignmentsData.map(a => ({
+          id: a.id,
+          title: a.title,
+          subject: a.subject,
+          dueDate: a.dueDate,
+          maxScore: a.maxScore,
+          submissionCount: a.submissionCount,
+          gradedCount: 0 // TODO: Calculate from submissions
+        })));
+        
+        // Convert pending submissions to StudentSubmission format
+        setSubmissions(pendingData.map(p => ({
+          id: p.id.toString(),
+          studentId: p.student_code,
+          studentName: p.student_name,
+          assignmentId: p.id.toString(),
+          assignmentTitle: p.assignment_title,
+          submittedAt: p.submitted_at,
+          status: 'submitted' as const,
+          maxScore: 10,
+          files: [],
+          submissionText: ''
+        })));
+      }
     } catch (err: any) {
+      console.error('Error loading grading data:', err);
       setError(err.message || 'Không thể tải dữ liệu chấm điểm');
     } finally {
       setLoading(false);

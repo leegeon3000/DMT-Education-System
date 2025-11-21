@@ -62,6 +62,7 @@ const AnnouncementPage: React.FC = () => {
       image_url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop',
       published_at: '2025-01-10',
       created_at: '2025-01-10',
+      updated_at: '2025-01-10',
       author_id: 1
     },
     {
@@ -75,6 +76,7 @@ const AnnouncementPage: React.FC = () => {
       image_url: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop',
       published_at: '2025-01-08',
       created_at: '2025-01-08',
+      updated_at: '2025-01-08',
       author_id: 1
     },
     {
@@ -88,13 +90,14 @@ const AnnouncementPage: React.FC = () => {
       image_url: 'https://images.unsplash.com/photo-1559223607-a43c990af5d1?w=800&h=600&fit=crop',
       published_at: '2025-01-05',
       created_at: '2025-01-05',
+      updated_at: '2025-01-05',
       author_id: 1
     }
   ];
 
   const categories = [
     { id: 'all', name: 'Tất cả', icon: Bell, color: '#374151' },
-    { id: 'announcement', name: 'Thông báo', icon: Megaphone, color: '#3b82f6' },
+    { id: 'announcement', name: 'Thông báo', icon: Megaphone, color: '#01AAD3' },
     { id: 'news', name: 'Tin tức', icon: TrendingUp, color: '#10b981' },
     { id: 'event', name: 'Sự kiện', icon: Calendar, color: '#f59e0b' },
   ];
@@ -117,7 +120,7 @@ const AnnouncementPage: React.FC = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'announcement': return '#3b82f6';
+      case 'announcement': return '#01AAD3';
       case 'news': return '#10b981';
       case 'event': return '#f59e0b';
       default: return '#6b7280';
@@ -142,127 +145,156 @@ const AnnouncementPage: React.FC = () => {
       />
       
       <Layout>
+        <div style={{ background: '#ffffff', minHeight: '100vh' }}>
         {/* Hero Section */}
-        <div style={{
-          background: '#ffffff',
-          padding: '60px 1rem 40px',
-          borderBottom: '1px solid #e5e7eb'
+        <section style={{
+          position: 'relative',
+          padding: '48px 20px',
+          background: 'linear-gradient(135deg, #dc2626 0%, #f43f5e 50%, #ec4899 100%)',
+          overflow: 'hidden'
         }}>
+          {/* Decorative elements */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.1
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+          </div>
+
           <div style={{
             maxWidth: '1200px',
             margin: '0 auto',
+            position: 'relative',
+            zIndex: 10
           }}>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', color: 'white' }}>
               <div style={{
-                display: 'inline-block',
-                background: '#f3f4f6',
-                color: '#374151',
-                padding: '8px 20px',
-                borderRadius: '8px',
-                marginBottom: '20px',
-                fontSize: '14px',
-                fontWeight: '600'
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '6px 12px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '9999px',
+                marginBottom: '16px'
               }}>
-                <Bell size={16} style={{ display: 'inline', marginRight: '8px', marginBottom: '-2px' }} />
-                Thông báo & Tin tức
+                <Bell size={16} style={{ marginRight: '6px' }} />
+                <span style={{ fontSize: '12px', fontWeight: '600' }}>Thông báo & Tin tức</span>
               </div>
               
               <h1 style={{
-                fontSize: '42px',
-                fontWeight: '800',
+                fontSize: '36px',
+                fontWeight: '700',
                 marginBottom: '16px',
-                color: '#111827',
                 lineHeight: '1.2'
               }}>
                 Cập nhật mới nhất
               </h1>
-              
               <p style={{
-                fontSize: '17px',
-                color: '#6b7280',
-                maxWidth: '700px',
-                margin: '0 auto',
+                fontSize: '16px',
+                opacity: 0.9,
+                maxWidth: '640px',
+                margin: '0 auto 24px',
                 lineHeight: '1.6'
               }}>
                 Những thông tin, tin tức và sự kiện mới nhất từ DMT Education
               </p>
+
+              {/* Search bar */}
+              <div style={{
+                maxWidth: '768px',
+                margin: '0 auto'
+              }}>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm thông báo, tin tức..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 48px 12px 48px',
+                      background: 'white',
+                      borderRadius: '12px',
+                      color: '#111827',
+                      outline: 'none',
+                      border: 'none',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }}
+                  />
+                  <Search 
+                    size={20} 
+                    style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#9ca3af'
+                    }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      style={{
+                        position: 'absolute',
+                        right: '16px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#9ca3af',
+                        padding: '4px'
+                      }}
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Search & Filter */}
-        <div style={{
-          background: '#ffffff',
-          padding: '30px 1rem',
-          borderBottom: '1px solid #e5e7eb',
+        {/* Category Tabs */}
+        <section style={{
           position: 'sticky',
-          top: 0,
-          zIndex: 10
+          top: '64px',
+          zIndex: 40,
+          background: 'white',
+          borderBottom: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <div style={{
             maxWidth: '1200px',
-            margin: '0 auto'
+            margin: '0 auto',
+            padding: '0 16px'
           }}>
-            {/* Search Bar */}
             <div style={{
               display: 'flex',
-              gap: '20px',
-              marginBottom: '25px',
-              flexWrap: 'wrap',
-              alignItems: 'center'
-            }}>
-              <div style={{ flex: '1', minWidth: '250px', position: 'relative' }}>
-                <Search size={20} style={{
-                  position: 'absolute',
-                  left: '15px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#9ca3af'
-                }} />
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm thông báo, tin tức..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '14px 45px',
-                    borderRadius: '12px',
-                    border: '2px solid #e5e7eb',
-                    fontSize: '15px',
-                    outline: 'none',
-                    transition: 'all 0.2s'
-                  }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
-                  onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    style={{
-                      position: 'absolute',
-                      right: '15px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: '#9ca3af',
-                      padding: '5px'
-                    }}
-                  >
-                    <X size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Category Tabs */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              overflowX: 'auto',
-              paddingBottom: '8px'
+              alignItems: 'center',
+              gap: '16px',
+              padding: '16px 0',
+              overflowX: 'auto'
             }}>
               {categories.map((category) => {
                 const Icon = category.icon;
@@ -272,36 +304,45 @@ const AnnouncementPage: React.FC = () => {
                     key={category.id}
                     onClick={() => setSelectedType(category.id)}
                     style={{
-                      padding: '10px 20px',
-                      background: isActive ? '#f9fafb' : 'white',
-                      color: isActive ? '#111827' : '#6b7280',
-                      border: `2px solid ${isActive ? category.color : '#e5e7eb'}`,
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      fontWeight: isActive ? '600' : '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      whiteSpace: 'nowrap'
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.2s',
+                      background: isActive ? '#01AAD3' : '#f3f4f6',
+                      color: isActive ? 'white' : '#374151',
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: isActive ? '0 4px 6px -1px rgba(220, 38, 38, 0.3)' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = '#e5e7eb';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.background = '#f3f4f6';
+                      }
                     }}
                   >
-                    <Icon size={16} color={isActive ? category.color : '#6b7280'} />
+                    <Icon size={20} />
                     {category.name}
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Main Content */}
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '40px 1rem',
-          background: '#ffffff'
+          padding: '40px 1rem'
         }}>
           {loading ? (
             <div style={{
@@ -314,7 +355,7 @@ const AnnouncementPage: React.FC = () => {
                 width: '50px',
                 height: '50px',
                 border: '4px solid #f3f4f6',
-                borderTopColor: '#3b82f6',
+                borderTopColor: '#dc2626',
                 borderRadius: '50%',
                 animation: 'spin 1s linear infinite'
               }}></div>
@@ -412,7 +453,7 @@ const AnnouncementPage: React.FC = () => {
                       
                       <button style={{
                         padding: '12px 24px',
-                        background: '#3b82f6',
+                        background: '#01AAD3',
                         color: 'white',
                         border: 'none',
                         borderRadius: '8px',
@@ -569,6 +610,7 @@ const AnnouncementPage: React.FC = () => {
             to { transform: rotate(360deg); }
           }
         `}</style>
+        </div>
       </Layout>
     </>
   );

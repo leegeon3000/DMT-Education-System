@@ -8,6 +8,7 @@ import TeacherDetailPage from '../pages/TeacherDetailPage';
 import SchedulePage from '../pages/SchedulePage';
 import AnnouncementPage from '../pages/AnnouncementPage';
 import AboutPage from '../pages/AboutPage';
+import ContactPage from '../pages/ContactPage';
 import Login from '../features/auth/pages/Login';
 import UnauthorizedPage from '../pages/UnauthorizedPage';
 
@@ -15,6 +16,7 @@ import UnauthorizedPage from '../pages/UnauthorizedPage';
 import AdminLayout from '../components/admin/AdminLayout';
 import StudentLayout from '../components/layout/StudentLayout';
 import TeacherLayout from '../components/layout/TeacherLayout';
+import StaffLayout from '../components/layout/StaffLayout';
 
 // Guards
 import ProtectedRoute from '../components/common/ProtectedRoute';
@@ -30,19 +32,37 @@ import StudentPayments from '../features/students/pages/Payments';
 import StudentSurveys from '../features/students/pages/Surveys';
 import StudentNotifications from '../features/students/pages/Notifications';
 
-// Teacher Pages
-import TeacherDashboard from '../features/teachers/pages/Dashboard';
-import TeacherAssignments from '../features/teachers/pages/Assignments';
-import TeacherGrading from '../features/teachers/pages/Grading';
-import TeacherMaterials from '../features/teachers/pages/Materials';
+// Teacher Pages - NEW UI
+import TeacherDashboard from '../pages/teacher/TeacherDashboard';
+import MyClasses from '../pages/teacher/MyClasses';
+import TeacherAssignments from '../pages/teacher/Assignments';
+import TeacherGrading from '../pages/teacher/Grading';
+import TeacherAttendance from '../pages/teacher/Attendance';
+import TeacherMaterials from '../pages/teacher/Materials';
+// Old teacher pages (keep for compatibility)
 import TeacherSurveys from '../features/teachers/pages/Surveys';
 import TeacherTimesheet from '../features/teachers/pages/Timesheet';
 import TeacherCalendar from '../features/teachers/pages/Calendar';
 import TeacherReports from '../features/teachers/pages/Reports';
 
+// Staff Pages (NEW)
+import StaffDashboard from '../features/staff/pages/Dashboard';
+import StudentRegistration from '../features/staff/pages/StudentRegistration';
+import StaffStudentsManagement from '../features/staff/pages/StudentsManagement';
+import PaymentProcessing from '../features/staff/pages/PaymentProcessing';
+import PaymentHistory from '../features/staff/pages/PaymentHistory';
+import EnrollmentsManagement from '../features/staff/pages/EnrollmentsManagement';
+import EnrollmentCreate from '../features/staff/pages/EnrollmentCreate';
+import StaffSchedule from '../features/staff/pages/Schedule';
+import StaffSupport from '../features/staff/pages/Support';
+import StaffTasks from '../features/staff/pages/Tasks';
+import StaffTickets from '../features/staff/pages/Tickets';
+import StaffClasses from '../features/staff/pages/Classes';
+import StaffReports from '../features/staff/pages/Reports';
+
 // Admin Pages
 import AdminDashboard from '../features/admin/pages/Dashboard';
-import StudentsManagement from '../features/admin/pages/Students';
+import AdminStudentsManagement from '../features/admin/pages/Students';
 import CoursesManagement from '../features/admin/pages/Courses';
 import TeachersManagement from '../features/admin/pages/Teachers';
 import StaffManagement from '../features/admin/pages/Staff';
@@ -72,6 +92,7 @@ const AppRoutes = () => {
       <Route path="/schedule" element={<SchedulePage />} />
       <Route path="/announcements" element={<AnnouncementPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/login" element={<Login />} />
 
@@ -106,8 +127,11 @@ const AppRoutes = () => {
       >
         <Route index element={<Navigate to="/teacher/dashboard" replace />} />
         <Route path="dashboard" element={<TeacherDashboard />} />
+        <Route path="classes" element={<MyClasses />} />
         <Route path="assignments" element={<TeacherAssignments />} />
         <Route path="grading" element={<TeacherGrading />} />
+        <Route path="grading/:assignmentId" element={<TeacherGrading />} />
+        <Route path="attendance" element={<TeacherAttendance />} />
         <Route path="materials" element={<TeacherMaterials />} />
         <Route path="surveys" element={<TeacherSurveys />} />
         <Route path="timesheet" element={<TeacherTimesheet />} />
@@ -126,7 +150,7 @@ const AppRoutes = () => {
       >
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="users/students" element={<StudentsManagement />} />
+        <Route path="users/students" element={<AdminStudentsManagement />} />
         <Route path="users/teachers" element={<TeachersManagement />} />
         <Route path="users/staff" element={<StaffManagement />} />
         <Route path="courses" element={<CoursesManagement />} />
@@ -141,6 +165,31 @@ const AppRoutes = () => {
         <Route path="analytics" element={<Analytics />} />
         <Route path="roles" element={<Roles />} />
         <Route path="settings" element={<Settings />} />
+      </Route>
+
+      {/* Staff Routes - Protected */}
+      <Route 
+        path="/staff" 
+        element={
+          <ProtectedRoute allowedRoles={[Role.STAFF]} fallbackPath="/auth/login">
+            <StaffLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/staff/dashboard" replace />} />
+        <Route path="dashboard" element={<StaffDashboard />} />
+        <Route path="students" element={<StaffStudentsManagement />} />
+        <Route path="students/register" element={<StudentRegistration />} />
+        <Route path="payments" element={<PaymentHistory />} />
+        <Route path="payments/process" element={<PaymentProcessing />} />
+        <Route path="enrollments" element={<EnrollmentsManagement />} />
+        <Route path="enrollments/create" element={<EnrollmentCreate />} />
+        <Route path="classes" element={<StaffClasses />} />
+        <Route path="schedule" element={<StaffSchedule />} />
+        <Route path="support" element={<StaffSupport />} />
+        <Route path="tasks" element={<StaffTasks />} />
+        <Route path="tickets" element={<StaffTickets />} />
+        <Route path="reports" element={<StaffReports />} />
       </Route>
 
       {/* Unauthorized Page */}

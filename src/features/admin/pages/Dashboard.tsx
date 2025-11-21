@@ -249,9 +249,15 @@ const AdminDashboard: React.FC = () => {
         // PHASE B: Call getRevenue(2025) API
         const revenue2025 = await reportsAPI.getRevenue(2025);
         
+        // PHASE C: Get recent enrollments for activity feed
+        const recentEnrollmentsData = await reportsAPI.getRecentEnrollments(7);
+        
+        // PHASE D: Get top courses by enrollment
+        const topCoursesData = await reportsAPI.getTopCourses(5);
+        
         // Format revenue data for Recharts
         const monthNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
-        const formattedRevenue = revenue2025.monthly_revenue.map((item) => ({
+        const formattedRevenue = (revenue2025?.monthly_revenue || []).map((item) => ({
           month: monthNames[item.month - 1],
           revenue: item.revenue,
           revenueFormatted: new Intl.NumberFormat('vi-VN', {
@@ -262,56 +268,115 @@ const AdminDashboard: React.FC = () => {
         
         setRevenueData(formattedRevenue);
         
+        // Generate week signups data from recent enrollments
+        const now = new Date();
+        const weekDays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        const weekSignups = Array(7).fill(0);
+        const weekLabels = Array(7).fill('').map((_, i) => {
+          const d = new Date(now);
+          d.setDate(d.getDate() - (6 - i));
+          return weekDays[d.getDay()];
+        });
+        
+        // Count enrollments by day
+        if (recentEnrollmentsData?.data) {
+          recentEnrollmentsData.data.forEach((enrollment: any) => {
+            const enrollDate = new Date(enrollment.enrollment_date || enrollment.created_at);
+            const daysDiff = Math.floor((now.getTime() - enrollDate.getTime()) / (1000 * 60 * 60 * 24));
+            if (daysDiff >= 0 && daysDiff < 7) {
+              weekSignups[6 - daysDiff]++;
+            }
+          });
+        }
+        
+        // Format top courses for display
+        const newEnrollments = (topCoursesData?.data || []).slice(0, 5).map((cls: any) => ({
+          course: cls.name || cls.class_name,
+          count: cls.current_students || 0
+        }));
+        
+        // Generate activity feed from real data
+        const recentActivities: ActivityItem[] = [];
+        if (recentEnrollmentsData?.data) {
+          recentEnrollmentsData.data.slice(0, 6).forEach((enrollment: any, idx: number) => {
+            const timeAgo = getTimeAgo(enrollment.enrollment_date || enrollment.created_at);
+            recentActivities.push({
+              id: enrollment.id,
+              text: `Học sinh ${enrollment.student_name || 'Unknown'} đăng ký ${enrollment.class_name || enrollment.course_name || 'khóa học'}`,
+              time: timeAgo,
+              type: 'success'
+            });
+          });
+        }
+        
+        // Calculate changes (mock for now - can add previous month data later)
+        const studentChange = 12.5;
+        const teacherChange = 8.3;
+        const courseChange = 15.2;
+        const revenueChange = 23.4;
+        
         // Map API data to state
         setStats({
           totalStudents: overviewData.total_students || 0,
           totalTeachers: overviewData.total_teachers || 0,
-          totalCourses: overviewData.active_classes || 0, // Using active_classes as courses
+          totalCourses: overviewData.active_classes || 0,
           monthRevenue: new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND'
           }).format(overviewData.revenue_this_month || overviewData.revenue_this_year || 0),
           pendingPayments: overviewData.pending_payments || 0,
           attendanceRate: 95.2, // Will add this to stored procedure later
-          // Mock data for features not yet in stored procedure
-          studentChange: 12.5,
-          teacherChange: 8.3,
-          courseChange: 15.2,
-          revenueChange: 23.4,
-          weekSignups: [18, 24, 16, 29, 32, 26, 35],
-          weekLabels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-          recentActivities: [
-            { id: 1, text: 'Học sinh Nguyễn Minh Anh đăng ký khóa học Toán 10 Nâng cao', time: '15 phút trước', type: 'success' },
-            { id: 2, text: 'Giáo viên Trần Quốc Bảo đã upload tài liệu cho lớp Toán 11A1', time: '32 phút trước', type: 'info' },
-            { id: 3, text: 'Lớp học Tiếng Anh IELTS 7.0 được lên lịch vào 19h tối nay', time: '1 giờ trước', type: 'info' },
-            { id: 4, text: 'Học sinh Lê Thị Bình đã hoàn thành thanh toán khóa học Hóa 12', time: '2 giờ trước', type: 'success' },
-            { id: 5, text: 'Hệ thống phát hiện xung đột lịch phòng học P204 vào ngày 25/08', time: '3 giờ trước', type: 'warning' },
-            { id: 6, text: 'Nhân viên Vũ Thị Hương đã tạo báo cáo doanh thu Quý 3/2025', time: '5 giờ trước', type: 'info' },
+          studentChange,
+          teacherChange,
+          courseChange,
+          revenueChange,
+          weekSignups: weekSignups.length > 0 ? weekSignups : [0, 0, 0, 0, 0, 0, 0],
+          weekLabels,
+          recentActivities: recentActivities.length > 0 ? recentActivities : [
+            { id: 1, text: 'Chưa có hoạt động gần đây', time: 'Bây giờ', type: 'info' }
           ],
-          newEnrollments: [
-            { course: 'Toán 12 Nâng cao', count: 28 },
-            { course: 'Luyện thi IELTS', count: 24 },
-            { course: 'Lý 11 Cơ bản', count: 19 },
-            { course: 'Hóa 10 Nâng cao', count: 16 },
-            { course: 'Tiếng Anh Giao tiếp', count: 15 },
+          newEnrollments: newEnrollments.length > 0 ? newEnrollments : [
+            { course: 'Chưa có dữ liệu', count: 0 }
           ],
           upcomingEvents: [
-            { title: 'Họp phụ huynh Toán 9A', time: '24/08 - 18:00', location: 'Phòng 305' },
-            { title: 'Workshop Kỹ năng học tập', time: '25/08 - 14:30', location: 'Phòng Đa năng' },
-            { title: 'Thi thử Tiếng Anh', time: '26/08 - 08:00', location: 'Phòng 201-204' },
-            { title: 'Khai giảng lớp Lý 12', time: '27/08 - 19:00', location: 'Phòng 102' },
+            { title: 'Họp phụ huynh Toán 9A', time: '24/11 - 18:00', location: 'Phòng 305' },
+            { title: 'Workshop Kỹ năng học tập', time: '25/11 - 14:30', location: 'Phòng Đa năng' },
+            { title: 'Thi thử Tiếng Anh', time: '26/11 - 08:00', location: 'Phòng 201-204' },
+            { title: 'Khai giảng lớp Lý 12', time: '27/11 - 19:00', location: 'Phòng 102' },
           ]
         });
         setLoading(false);
       } catch (e: any) {
         console.error('Error loading admin dashboard:', e);
-        setError(e?.message || 'Không thể tải dữ liệu');
+        
+        // Check if it's an authentication/authorization error
+        if (e.response?.status === 401 || e.response?.status === 403) {
+          setError('Bạn không có quyền truy cập trang này. Vui lòng đăng nhập với tài khoản Admin.');
+        } else if (e.response?.status === 400) {
+          setError('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
+        } else {
+          setError(e?.response?.data?.error || e?.message || 'Không thể tải dữ liệu. Vui lòng thử lại sau.');
+        }
+        
         setLoading(false);
       }
     };
     
     load();
   }, []);
+  
+  // Helper function to calculate time ago
+  const getTimeAgo = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (seconds < 60) return 'Vừa xong';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} phút trước`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} giờ trước`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)} ngày trước`;
+    return date.toLocaleDateString('vi-VN');
+  };
 
   if (loading) {
     return (

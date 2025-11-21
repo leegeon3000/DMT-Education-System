@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, Calendar, Award, BookOpen, Clock, DollarSign, Star, TrendingUp, Users, BarChart3, Phone, Mail, MapPin } from 'lucide-react';
+import { X, User, Calendar, Award, BookOpen, Clock, DollarSign, TrendingUp, Users, BarChart3, Phone, Mail, MapPin } from 'lucide-react';
 
 interface Teacher {
   id: string;
@@ -13,7 +13,7 @@ interface Teacher {
   hireDate: string;
   salary: number;
   experience: number;
-  rating: number;
+
   totalClasses: number;
   totalStudents: number;
   hoursThisMonth: number;
@@ -44,17 +44,17 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
   ];
 
   const performanceData = [
-    { month: 'Tháng 1', hours: 78, rating: 4.8, students: 35 },
-    { month: 'Tháng 2', hours: 82, rating: 4.9, students: 38 },
-    { month: 'Tháng 3', hours: 75, rating: 4.7, students: 32 },
-    { month: 'Tháng 4', hours: 85, rating: 4.9, students: 40 },
-    { month: 'Tháng 5', hours: 80, rating: 4.8, students: 36 }
+    { month: 'Tháng 1', hours: 78, students: 35 },
+    { month: 'Tháng 2', hours: 82, students: 38 },
+    { month: 'Tháng 3', hours: 75, students: 32 },
+    { month: 'Tháng 4', hours: 85, students: 40 },
+    { month: 'Tháng 5', hours: 80, students: 36 }
   ];
 
   const reviews = [
-    { id: '1', studentName: 'Nguyễn Văn An', rating: 5, comment: 'Cô giảng rất hay, dễ hiểu và nhiệt tình', date: '2025-08-15', course: 'IELTS 6.5' },
-    { id: '2', studentName: 'Trần Thị Bình', rating: 5, comment: 'Phương pháp giảng dạy hiệu quả, tiến bộ rõ rệt', date: '2025-08-10', course: 'Academic Writing' },
-    { id: '3', studentName: 'Lê Minh Cường', rating: 4, comment: 'Cô rất tận tâm, luôn sẵn sàng giải đáp thắc mắc', date: '2025-08-05', course: 'IELTS Writing' }
+    { id: '1', studentName: 'Nguyễn Văn An', comment: 'Cô giảng rất hay, dễ hiểu và nhiệt tình', date: '2025-08-15', course: 'IELTS 6.5' },
+    { id: '2', studentName: 'Trần Thị Bình', comment: 'Phương pháp giảng dạy hiệu quả, tiến bộ rõ rệt', date: '2025-08-10', course: 'Academic Writing' },
+    { id: '3', studentName: 'Lê Minh Cường', comment: 'Cô rất tận tâm, luôn sẵn sàng giải đáp thắc mắc', date: '2025-08-05', course: 'IELTS Writing' }
   ];
 
   const salaryHistory = [
@@ -109,14 +109,7 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
     }).format(amount);
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${index < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -136,10 +129,7 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getLevelColor(teacher.level)}`}>
                   {getLevelText(teacher.level)}
                 </span>
-                <div className="flex items-center">
-                  {renderStars(teacher.rating)}
-                  <span className="ml-1 text-sm font-medium">{teacher.rating}</span>
-                </div>
+
               </div>
             </div>
           </div>
@@ -158,7 +148,6 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
               { id: 'profile', label: 'Hồ sơ', icon: User },
               { id: 'schedule', label: 'Lịch dạy', icon: Calendar },
               { id: 'performance', label: 'Hiệu suất', icon: BarChart3 },
-              { id: 'reviews', label: 'Đánh giá', icon: Star },
               { id: 'salary', label: 'Lương', icon: DollarSign }
             ].map((tab) => {
               const Icon = tab.icon;
@@ -332,11 +321,7 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
                 </div>
                 <div className="bg-yellow-50 p-4 rounded-lg">
                   <div className="flex items-center">
-                    <Star className="w-6 h-6 text-yellow-600 mr-2" />
-                    <div>
-                      <p className="text-sm text-yellow-600">Đánh giá TB</p>
-                      <p className="text-xl font-bold text-yellow-900">{teacher.rating}</p>
-                    </div>
+
                   </div>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
@@ -363,10 +348,6 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
                             <p className="font-medium">{data.hours}h</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-xs text-gray-500">Đánh giá</p>
-                            <p className="font-medium">{data.rating}</p>
-                          </div>
-                          <div className="text-center">
                             <p className="text-xs text-gray-500">Học viên</p>
                             <p className="font-medium">{data.students}</p>
                           </div>
@@ -383,38 +364,6 @@ const TeacherDetailModal: React.FC<TeacherDetailModalProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'reviews' && (
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Đánh giá từ học viên</h3>
-                <div className="flex items-center">
-                  <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-                  <span className="font-medium">{teacher.rating}</span>
-                  <span className="text-sm text-gray-500 ml-1">({reviews.length} đánh giá)</span>
-                </div>
-              </div>
-              <div className="space-y-4">
-                {reviews.map((review) => (
-                  <div key={review.id} className="bg-white border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <div className="font-medium text-gray-900">{review.studentName}</div>
-                        <div className="text-sm text-gray-500">{review.course}</div>
-                        <div className="flex items-center mt-1">
-                          {renderStars(review.rating)}
-                        </div>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {new Date(review.date).toLocaleDateString('vi-VN')}
-                      </div>
-                    </div>
-                    <p className="text-gray-600">{review.comment}</p>
-                  </div>
-                ))}
               </div>
             </div>
           )}

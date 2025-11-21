@@ -13,9 +13,17 @@ import {
   UserGroupIcon,
   CalendarIcon,
   MegaphoneIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  ChartBarIcon,
+  BookOpenIcon,
+  Cog6ToothIcon,
+  ClipboardDocumentListIcon,
+  BriefcaseIcon
 } from '@heroicons/react/24/outline';
 import useAuth from '../../hooks/useAuth';
+import { useSelector } from 'react-redux';
+import { selectUserRole } from '../../store/slices/userSlice';
+import { Role } from '../../types';
 
 interface NavItem {
   name: string;
@@ -36,6 +44,39 @@ const ModernHeader: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  let userRole = useSelector(selectUserRole);
+  
+  // Fallback: Get role from localStorage if Redux doesn't have it
+  if (!userRole && isAuthenticated) {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        const roleId = user.role_id;
+        // Map role_id to Role enum
+        switch (roleId) {
+          case 1:
+            userRole = Role.ADMIN;
+            break;
+          case 2:
+            userRole = Role.STAFF;
+            break;
+          case 3:
+            userRole = Role.TEACHER;
+            break;
+          case 4:
+            userRole = Role.STUDENT;
+            break;
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing user from localStorage:', error);
+    }
+  }
+  
+  // Debug: Log auth state
+  console.log('ModernHeader - isAuthenticated:', isAuthenticated);
+  console.log('ModernHeader - userRole:', userRole);
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -74,10 +115,63 @@ const ModernHeader: React.FC = () => {
     }
   };
 
+  // Get menu items based on user role
+  const getUserMenuItems = () => {
+    if (!userRole) return [];
+
+    switch (userRole) {
+      case Role.ADMIN:
+        return [
+          { path: '/admin/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+          { path: '/admin/settings', label: 'Cài đặt', icon: Cog6ToothIcon },
+        ];
+      
+      case Role.TEACHER:
+        return [
+          { path: '/teacher/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+          { path: '/teacher/classes', label: 'Lớp học', icon: AcademicCapIcon },
+          { path: '/teacher/assignments', label: 'Bài tập', icon: ClipboardDocumentListIcon },
+          { path: '/teacher/attendance', label: 'Điểm danh', icon: UserGroupIcon },
+          { path: '/teacher/materials', label: 'Tài liệu', icon: BookOpenIcon },
+        ];
+      
+      case Role.STUDENT:
+        return [
+          { path: '/students/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+          { path: '/students/schedule', label: 'Lịch học', icon: CalendarIcon },
+          { path: '/students/materials', label: 'Tài liệu', icon: BookOpenIcon },
+          { path: '/students/transcript', label: 'Bảng điểm', icon: ClipboardDocumentListIcon },
+        ];
+      
+      case Role.STAFF:
+        return [
+          { path: '/staff/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+          { path: '/staff/students', label: 'Quản lý học sinh', icon: UserGroupIcon },
+          { path: '/staff/enrollments', label: 'Ghi danh', icon: ClipboardDocumentListIcon },
+          { path: '/staff/tickets', label: 'Hỗ trợ', icon: BriefcaseIcon },
+        ];
+      
+      default:
+        return [
+          { path: '/profile', label: 'Trang cá nhân', icon: UserCircleIcon },
+          { path: '/settings', label: 'Cài đặt', icon: Cog6ToothIcon },
+        ];
+    }
+  };
+
+  const menuItems = getUserMenuItems();
+  
+  // Debug: Log menu items
+  console.log('ModernHeader - menuItems:', menuItems);
+
   const handleLogout = () => {
-    // TODO: Implement logout
-    console.log('Logout');
+    // Clear auth data
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setIsUserMenuOpen(false);
+    // Redirect to login
+    navigate('/login');
   };
 
   return (
@@ -183,32 +277,25 @@ const ModernHeader: React.FC = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden"
+                      className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
                     >
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        Trang cá nhân
-                      </Link>
-                      <Link
-                        to="/my-courses"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        Khóa học của tôi
-                      </Link>
-                      <Link
-                        to="/settings"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        Cài đặt
-                      </Link>
+                      {menuItems.map((item, index) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link
+                            key={item.path}
+                            to={item.path}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            onClick={() => setIsUserMenuOpen(false)}
+                          >
+                            <Icon className="w-4 h-4" />
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 border-t border-gray-100"
+                        className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-3 border-t border-gray-100"
                       >
                         <ArrowRightOnRectangleIcon className="w-4 h-4" />
                         Đăng xuất
@@ -338,7 +425,7 @@ const ModernHeader: React.FC = () => {
               <div className="mt-6">
                 <p className="text-sm text-gray-500 mb-3">Tìm kiếm phổ biến:</p>
                 <div className="flex flex-wrap gap-2">
-                  {['Lập trình Web', 'UI/UX', 'Tiếng Anh', 'Toán học'].map((tag) => (
+                  {['Toán học', 'Vật lý', 'Hóa học', 'Tiếng Anh'].map((tag) => (
                     <button
                       key={tag}
                       onClick={() => {

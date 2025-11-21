@@ -44,10 +44,10 @@ interface Course {
 
 const categories = [
   { id: 'all', name: 'Tất cả', icon: SparklesIcon },
-  { id: 'programming', name: 'Lập trình', icon: BookOpenIcon },
+  { id: 'science', name: 'Khoa học', icon: BookOpenIcon },
   { id: 'language', name: 'Ngoại ngữ', icon: AcademicCapIcon },
   { id: 'math', name: 'Toán học', icon: ClockIcon },
-  { id: 'business', name: 'Kinh doanh', icon: UserGroupIcon },
+  { id: 'literature', name: 'Văn học', icon: UserGroupIcon },
 ];
 
 const levels = [

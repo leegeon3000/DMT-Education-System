@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
 import { SEOHead } from '../../../components/common';
 import TeacherLayout from '../../../components/layout/TeacherLayout';
+import teacherAPI, { ClassSchedule } from '../../../services/teacherAPI';
 import { Calendar as CalendarIcon, MapPin } from 'lucide-react';
-
-interface ClassSchedule {
-  id: string;
-  subject: string;
-  className: string;
-  room: string;
-  startTime: string;
-  endTime: string;
-  dayOfWeek: number; // 0 = Sunday, 1 = Monday, etc.
-  studentCount: number;
-}
 
 interface CalendarEvent {
   id: string;
@@ -25,51 +17,79 @@ interface CalendarEvent {
 }
 
 const Calendar: React.FC = () => {
+  const user = useSelector(selectCurrentUser);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'week' | 'month'>('week');
+  const [schedules, setSchedules] = useState<ClassSchedule[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  const [schedules] = useState<ClassSchedule[]>([
-    {
-      id: '1',
-      subject: 'Toán học',
-      className: '10A',
-      room: 'P101',
-      startTime: '08:00',
-      endTime: '09:40',
-      dayOfWeek: 1, // Monday
-      studentCount: 35
-    },
-    {
-      id: '2',
-      subject: 'Vật lý',
-      className: '11B',
-      room: 'P205',
-      startTime: '10:00',
-      endTime: '11:40',
-      dayOfWeek: 1, // Monday
-      studentCount: 32
-    },
-    {
-      id: '3',
-      subject: 'Toán học',
-      className: '10B',
-      room: 'P102',
-      startTime: '14:00',
-      endTime: '15:40',
-      dayOfWeek: 2, // Tuesday
-      studentCount: 38
-    },
-    {
-      id: '4',
-      subject: 'Vật lý',
-      className: '11A',
-      room: 'P205',
-      startTime: '08:00',
-      endTime: '09:40',
-      dayOfWeek: 3, // Wednesday
-      studentCount: 34
+  useEffect(() => {
+    loadSchedule();
+  }, [user?.teacher_id]);
+
+  const loadSchedule = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
     }
-  ]);
+
+    try {
+      setLoading(true);
+      const data = await teacherAPI.getSchedule(user.teacher_id);
+      
+      if (data.length === 0) {
+        const mockSchedules: ClassSchedule[] = [
+          {
+            id: '1',
+            subject: 'Toán học',
+            className: '10A',
+            room: 'P101',
+            startTime: '08:00',
+            endTime: '09:40',
+            dayOfWeek: 1,
+            studentCount: 35
+          },
+          {
+            id: '2',
+            subject: 'Vật lý',
+            className: '11B',
+            room: 'P205',
+            startTime: '10:00',
+            endTime: '11:40',
+            dayOfWeek: 1,
+            studentCount: 32
+          },
+          {
+            id: '3',
+            subject: 'Toán học',
+            className: '10B',
+            room: 'P102',
+            startTime: '14:00',
+            endTime: '15:40',
+            dayOfWeek: 2,
+            studentCount: 38
+          },
+          {
+            id: '4',
+            subject: 'Vật lý',
+            className: '11A',
+            room: 'P205',
+            startTime: '08:00',
+            endTime: '09:40',
+            dayOfWeek: 3,
+            studentCount: 34
+          }
+        ];
+        setSchedules(mockSchedules);
+      } else {
+        setSchedules(data);
+      }
+    } catch (error) {
+      console.error('Error loading schedule:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [events] = useState<CalendarEvent[]>([
     {

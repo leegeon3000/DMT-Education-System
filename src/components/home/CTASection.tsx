@@ -102,19 +102,31 @@ const CTASection: React.FC = () => {
 
     setStatus('submitting');
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Success
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', message: '' });
-      
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setStatus('idle');
-      }, 5000);
+      // Gửi data đến backend API
+      const response = await fetch('http://localhost:3001/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setStatus('success');
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        
+        // Reset status after 5 seconds
+        setTimeout(() => {
+          setStatus('idle');
+        }, 5000);
+      } else {
+        throw new Error(result.message || 'Có lỗi xảy ra');
+      }
     } catch (error) {
+      console.error('Error submitting form:', error);
       setStatus('error');
       setTimeout(() => {
         setStatus('idle');

@@ -63,11 +63,11 @@ const mapRoleIdToRole = (roleId: number): Role | null => {
         case 1:
             return Role.ADMIN;
         case 2:
-            return Role.TEACHER;
+            return Role.STAFF;
         case 3:
-            return Role.STUDENT;
+            return Role.TEACHER;
         case 4:
-            return Role.STUDENT; // Parent
+            return Role.STUDENT;
         default:
             return null;
     }

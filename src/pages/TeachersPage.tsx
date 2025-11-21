@@ -7,7 +7,6 @@ import {
   Award,
   BookOpen,
   Users,
-  Star,
   GraduationCap,
   Briefcase,
   Search,
@@ -149,175 +148,135 @@ const TeachersPage: React.FC = () => {
       <Layout>
         {/* Hero Section */}
         <section style={{
-          background: '#ffffff',
-          padding: '60px 20px 40px',
-          borderBottom: '1px solid #e5e7eb',
+          position: 'relative',
+          padding: '48px 20px',
+          background: 'linear-gradient(135deg, #dc2626 0%, #f43f5e 50%, #ec4899 100%)',
+          overflow: 'hidden'
         }}>
+          {/* Decorative elements */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            opacity: 0.1
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+            <div style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: '384px',
+              height: '384px',
+              background: 'white',
+              borderRadius: '50%',
+              filter: 'blur(96px)'
+            }} />
+          </div>
 
           <div style={{
             maxWidth: '1200px',
             margin: '0 auto',
+            position: 'relative',
+            zIndex: 10
           }}>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', color: 'white' }}>
               <div style={{
-                display: 'inline-block',
-                background: '#f3f4f6',
-                color: '#374151',
-                padding: '8px 20px',
-                borderRadius: '8px',
-                marginBottom: '20px',
-                fontSize: '14px',
-                fontWeight: '600'
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '6px 12px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: '9999px',
+                marginBottom: '16px'
               }}>
-                <GraduationCap size={16} style={{ display: 'inline', marginRight: '8px', marginBottom: '-2px' }} />
-                Đội ngũ giảng viên DMT Education
+                <GraduationCap size={16} style={{ marginRight: '6px' }} />
+                <span style={{ fontSize: '12px', fontWeight: '600' }}>30+ giảng viên</span>
               </div>
               
               <h1 style={{
-                fontSize: '42px',
-                fontWeight: '800',
+                fontSize: '36px',
+                fontWeight: '700',
                 marginBottom: '16px',
-                color: '#111827',
+                lineHeight: '1.2'
               }}>
                 Đội ngũ giảng viên
               </h1>
               <p style={{
-                fontSize: '17px',
-                marginBottom: '40px',
-                maxWidth: '700px',
-                margin: '0 auto 40px',
-                lineHeight: '1.6',
-                color: '#6b7280',
+                fontSize: '16px',
+                opacity: 0.9,
+                maxWidth: '640px',
+                margin: '0 auto 24px',
+                lineHeight: '1.6'
               }}>
-                30 giáo viên giỏi kiến thức, giỏi truyền đạt, tận tâm với học viên
+                Chương trình đào tạo từ giáo viên giỏi kiến thức, giỏi truyền đạt
               </p>
 
-              {/* Stats */}
+              {/* Search bar */}
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-                gap: '20px',
-                maxWidth: '900px',
-                margin: '0 auto',
+                maxWidth: '768px',
+                margin: '0 auto'
               }}>
-                {[
-                  { icon: Users, label: '30+ Giảng viên', color: '#3b82f6' },
-                  { icon: BookOpen, label: '10+ Môn học', color: '#10b981' },
-                  { icon: Award, label: '15+ Năm kinh nghiệm', color: '#f59e0b' },
-                  { icon: Star, label: '4.8/5 Đánh giá', color: '#ef4444' },
-                ].map((stat, index) => (
-                  <div key={index} style={{
-                    padding: '24px',
-                    background: '#f9fafb',
-                    borderRadius: '12px',
-                    border: '1px solid #e5e7eb',
-                  }}>
-                    <stat.icon size={28} style={{ marginBottom: '12px', color: stat.color }} />
-                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#111827' }}>{stat.label}</div>
-                  </div>
-                ))}
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm giảng viên..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 48px 12px 48px',
+                      background: 'white',
+                      borderRadius: '12px',
+                      color: '#111827',
+                      outline: 'none',
+                      border: 'none',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }}
+                  />
+                  <Search 
+                    size={20} 
+                    style={{
+                      position: 'absolute',
+                      left: '16px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#9ca3af'
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Search & Filter Section */}
+        {/* Category Tabs */}
         <section style={{
-          padding: '30px 20px',
-          background: '#ffffff',
-          borderBottom: '1px solid #e5e7eb',
           position: 'sticky',
-          top: '0',
-          zIndex: 10,
+          top: '64px',
+          zIndex: 40,
+          background: 'white',
+          borderBottom: '1px solid #e5e7eb',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <div style={{
             maxWidth: '1200px',
             margin: '0 auto',
+            padding: '0 16px'
           }}>
-            {/* Search Bar */}
             <div style={{
               display: 'flex',
-              gap: '20px',
-              marginBottom: '30px',
-              flexWrap: 'wrap',
               alignItems: 'center',
-            }}>
-              <div style={{ 
-                flex: '1 1 300px',
-                position: 'relative',
-              }}>
-                <Search 
-                  size={20} 
-                  style={{
-                    position: 'absolute',
-                    left: '16px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: '#9ca3af',
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm giảng viên..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px 14px 48px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '12px',
-                    fontSize: '15px',
-                    outline: 'none',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#3b82f6';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e5e7eb';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <button
-                onClick={() => navigate('/teachers/list')}
-                style={{
-                  padding: '14px 28px',
-                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'all 0.3s ease',
-                  boxShadow: 'none',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                Xem tất cả
-                <ChevronRight size={18} />
-              </button>
-            </div>
-
-            {/* Category Tabs */}
-            <div style={{
-              display: 'flex',
-              gap: '12px',
-              overflowX: 'auto',
-              paddingBottom: '8px',
+              gap: '16px',
+              padding: '16px 0',
+              overflowX: 'auto'
             }}>
               {categories.map((category) => {
                 const Icon = category.icon;
@@ -327,34 +286,32 @@ const TeachersPage: React.FC = () => {
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
                     style={{
-                      padding: '10px 20px',
-                      background: isActive ? '#f9fafb' : 'white',
-                      color: isActive ? '#111827' : '#6b7280',
-                      border: `2px solid ${isActive ? '#3b82f6' : '#e5e7eb'}`,
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      fontWeight: isActive ? '600' : '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
                       whiteSpace: 'nowrap',
+                      transition: 'all 0.2s',
+                      background: isActive ? '#01AAD3' : '#f3f4f6',
+                      color: isActive ? 'white' : '#374151',
+                      border: 'none',
+                      cursor: 'pointer',
+                      boxShadow: isActive ? '0 4px 6px -1px rgba(1, 170, 211, 0.3)' : 'none'
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive) {
-                        e.currentTarget.style.borderColor = '#f59e0b';
-                        e.currentTarget.style.color = '#f59e0b';
+                        e.currentTarget.style.background = '#e5e7eb';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) {
-                        e.currentTarget.style.borderColor = '#e5e7eb';
-                        e.currentTarget.style.color = '#6b7280';
+                        e.currentTarget.style.background = '#f3f4f6';
                       }
                     }}
                   >
-                    <Icon size={16} />
+                    <Icon size={20} />
                     {category.name}
                   </button>
                 );
@@ -366,7 +323,7 @@ const TeachersPage: React.FC = () => {
         {/* Teachers Grid */}
         <section style={{
           padding: '60px 20px',
-          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%)',
+          background: '#ffffff',
         }}>
           <div style={{
             maxWidth: '1200px',
@@ -381,7 +338,7 @@ const TeachersPage: React.FC = () => {
                 flexDirection: 'column',
                 gap: '16px',
               }}>
-                <Loader className="animate-spin" size={40} color="#3b82f6" />
+                <Loader className="animate-spin" size={40} color="#01AAD3" />
                 <p style={{ color: '#6b7280', fontSize: '16px' }}>Đang tải danh sách giảng viên...</p>
               </div>
             ) : (
@@ -406,7 +363,7 @@ const TeachersPage: React.FC = () => {
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'translateY(-4px)';
                         e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.1)';
-                        e.currentTarget.style.borderColor = '#3b82f6';
+                        e.currentTarget.style.borderColor = '#01AAD3';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
@@ -420,24 +377,26 @@ const TeachersPage: React.FC = () => {
                         height: '280px',
                         position: 'relative',
                         overflow: 'hidden',
-                        background: '#f9fafb',
+                        background: 'linear-gradient(135deg, #01AAD3 0%, #016A8C 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}>
-                        <img 
-                          src={teacher.users.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.users.full_name)}&size=300&background=random`}
-                          alt={teacher.users.full_name}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            transition: 'transform 0.4s ease',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'scale(1.1)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'scale(1)';
-                          }}
-                        />
+                        <div style={{
+                          width: '120px',
+                          height: '120px',
+                          borderRadius: '50%',
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '48px',
+                          color: 'white',
+                          fontWeight: '700',
+                          backdropFilter: 'blur(10px)',
+                        }}>
+                          {teacher.users.full_name.charAt(0).toUpperCase()}
+                        </div>
                         
                         {/* Overlay gradient */}
                         <div style={{

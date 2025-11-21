@@ -26,12 +26,12 @@ const footerSections: FooterSection[] = [
   {
     title: 'Khóa học',
     links: [
-      { name: 'Lập trình Web', href: '/courses/web-development' },
-      { name: 'UI/UX Design', href: '/courses/ui-ux-design' },
-      { name: 'Quản trị Kinh doanh', href: '/courses/business' },
+      { name: 'Toán học', href: '/courses/math' },
+      { name: 'Vật lý', href: '/courses/physics' },
+      { name: 'Hóa học', href: '/courses/chemistry' },
       { name: 'Tiếng Anh', href: '/courses/english' },
-      { name: 'Khoa học Dữ liệu', href: '/courses/data-science' },
-      { name: 'Marketing Digital', href: '/courses/marketing' }
+      { name: 'Văn học', href: '/courses/literature' },
+      { name: 'Sinh học', href: '/courses/biology' }
     ]
   },
   {
@@ -139,29 +139,40 @@ const ModernFooter: React.FC = () => {
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-                Hệ thống giáo dục hàng đầu Việt Nam với hơn 15 năm kinh nghiệm. 
-                Chúng tôi cam kết mang đến chất lượng đào tạo xuất sắc và môi trường học tập chuyên nghiệp.
-              </p>
-
               {/* Contact info */}
               <div className="space-y-2">
                 <div className="flex items-start gap-2 text-xs">
                   <MapPinIcon className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <span>123 Đường ABC, Quận 1, TP. Hồ Chí Minh, Việt Nam</span>
+                  <div>
+                    <div className="font-semibold text-white mb-1">Cơ sở Gò Vấp:</div>
+                    <div>Chung cư K26, Dương Quảng Hàm, Phường 7, Quận Gò Vấp, TP.HCM</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-start gap-2 text-xs">
+                  <MapPinIcon className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-white mb-1">Cơ sở Quận 12:</div>
+                    <div>71/31 Song Hành, Phường Tân Hưng Thuận, Quận 12, TP.HCM</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 text-xs">
+                  <MapPinIcon className="w-4 h-4 text-purple-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-white mb-1">Cơ sở Quận 3:</div>
+                    <div>384/26 Nam Kỳ Khởi Nghĩa, Phường 8, Quận 3, TP.HCM</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs pt-2 border-t border-gray-800">
                   <PhoneIcon className="w-4 h-4 text-green-400 flex-shrink-0" />
-                  <span>Hotline: 1900 xxxx (8:00 - 20:00)</span>
+                  <span className="font-semibold text-white">Hotline: 077 230 5566</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <EnvelopeIcon className="w-4 h-4 text-rose-400 flex-shrink-0" />
-                  <span>contact@dmt.edu.vn</span>
+                  <span>example@dmteducation.vn</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                   <ClockIcon className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                  <span>Thứ 2 - Chủ nhật: 8:00 - 20:00</span>
+                  <span>T2-T6: 7:00 - 21:00 | T7-CN: 8:00 - 20:00</span>
                 </div>
               </div>
 
@@ -262,9 +273,7 @@ const ModernFooter: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="text-xs text-gray-500 text-center md:text-left">
               © {currentYear} <span className="text-white font-semibold">DMT Education</span>. 
-              All rights reserved. Made with{' '}
-              <HeartIcon className="w-3 h-3 inline text-red-500 animate-pulse" />{' '}
-              in Vietnam
+              All rights reserved.
             </div>
             <div className="flex flex-wrap justify-center gap-4 text-xs">
               <a href="/privacy" className="text-gray-500 hover:text-white transition-colors">

@@ -339,19 +339,19 @@ INSERT INTO NEWS (ID, TITLE, EXCERPT, CONTENT, IMAGE_URL, TYPE, STATUS, IS_FEATU
 (3, N'Tuyển sinh khóa IELTS 6.5+ - Khai giảng tháng 3/2025',
     N'Đăng ký ngay khóa học IELTS 6.5+ với đội ngũ giảng viên 8.0+ IELTS.',
     N' **KHÓA HỌC IELTS 6.5+ - KHAI GIẢNG THÁNG 3/2025**\n\n Cam kết đầu ra 6.5+\n Giảng viên 8.0+ IELTS\n Lớp nhỏ 15-20 học viên\n Tài liệu Cambridge chính gốc\n Học phí ưu đãi: 4.500.000đ/khóa\n\n📞 Hotline: 0905678901\nEmail: ielts@dmt.edu.vn',
-    '/images/ẢNH-GV/DMT-25-4.jpg',
+    '/images/ANH-GV/DMT-25-4.jpg',
     'NEWS', 'PUBLISHED', 0, 1, '2025-01-20 10:00:00', '2025-01-19 16:00:00'),
 
 (4, N'Sự kiện Ngày hội Toán học 2025',
     N'Tham gia Ngày hội Toán học với nhiều trò chơi trí tuệ và giải thưởng hấp dẫn.',
     N' **NGÀY HỘI TOÁN HỌC 2025**\n\n Thời gian: 15/03/2025\n Địa điểm: Trung tâm DMT Education\n\n**Chương trình:**\n- Thi giải toán nhanh\n- Trò chơi trí tuệ Toán học\n- Talkshow với các thầy cô giỏi\n- Giải thưởng giá trị\n\nMiễn phí tham gia! Đăng ký ngay!',
-    '/images/ẢNH-HỌC-SINH/DMT-25-33.jpg',
+    '/images/ANH-HỌC-SINH/DMT-25-33.jpg',
     'EVENT', 'PUBLISHED', 1, 1, '2025-02-01 08:00:00', '2025-01-31 10:00:00'),
 
 (5, N'Chúc mừng học viên đạt IELTS 7.5',
     N'Chúc mừng em Nguyễn Thị Mai đạt 7.5 IELTS sau 3 tháng học tại trung tâm.',
     N'**CHÚC MỪNG HỌC VIÊN ĐẠT 7.5 IELTS**\n\nTrung tâm DMT Education xin chúc mừng em **Nguyễn Thị Mai** đã đạt **7.5 IELTS** (Listening 8.0, Reading 8.0, Writing 7.0, Speaking 7.0) sau 3 tháng học tại trung tâm.\n\nChúc em tiếp tục thành công trên con đường học vấn!',
-    '/images/ẢNH-HỌC-SINH/DMT-25-38.jpg',
+    '/images/ANH-HỌC-SINH/DMT-25-38.jpg',
     'NEWS', 'PUBLISHED', 0, 1, '2025-02-05 14:00:00', '2025-02-05 10:00:00'),
 
 (6, N'Ưu đãi học phí tháng 2/2025',

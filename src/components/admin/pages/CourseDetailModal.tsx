@@ -38,9 +38,9 @@ const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
   ];
 
   const reviews = [
-    { id: '1', studentName: 'Nguyễn Văn An', rating: 5, comment: 'Khóa học rất hay, giáo viên nhiệt tình', date: '2025-01-10' },
-    { id: '2', studentName: 'Trần Thị Bình', rating: 4, comment: 'Nội dung phong phú, phù hợp với trình độ', date: '2025-01-08' },
-    { id: '3', studentName: 'Lê Minh Cường', rating: 5, comment: 'Giáo viên giảng dạy dễ hiểu, tài liệu đầy đủ', date: '2025-01-05' }
+    { id: '1', studentName: 'Nguyễn Văn An', comment: 'Khóa học rất hay, giáo viên nhiệt tình', date: '2025-01-10' },
+    { id: '2', studentName: 'Trần Thị Bình', comment: 'Nội dung phong phú, phù hợp với trình độ', date: '2025-01-08' },
+    { id: '3', studentName: 'Lê Minh Cường', comment: 'Giáo viên giảng dạy dễ hiểu, tài liệu đầy đủ', date: '2025-01-05' }
   ];
 
   if (!isOpen) return null;
@@ -90,14 +90,7 @@ const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
     }).format(amount);
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${index < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -397,9 +390,6 @@ const CourseDetailModal: React.FC<CourseDetailModalProps> = ({
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <div className="font-medium text-gray-900">{review.studentName}</div>
-                        <div className="flex items-center mt-1">
-                          {renderStars(review.rating)}
-                        </div>
                       </div>
                       <div className="text-sm text-gray-500">
                         {new Date(review.date).toLocaleDateString('vi-VN')}

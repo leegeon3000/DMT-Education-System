@@ -16,7 +16,6 @@ interface Teacher {
   hireDate: string;
   salary: number;
   experience: number;
-  rating: number;
   totalClasses: number;
   totalStudents: number;
   hoursThisMonth: number;
@@ -59,7 +58,6 @@ const TeachersManagement: React.FC = () => {
           hireDate: '2020-03-15',
           salary: 15000000,
           experience: 8,
-          rating: 4.9,
           totalClasses: 45,
           totalStudents: 320,
           hoursThisMonth: 85,
@@ -78,8 +76,7 @@ const TeachersManagement: React.FC = () => {
           status: 'active',
           hireDate: '2019-08-20',
           salary: 12000000,
-          experience: 6,
-          rating: 4.7,
+          experience: 5,
           totalClasses: 38,
           totalStudents: 280,
           hoursThisMonth: 72,
@@ -98,10 +95,9 @@ const TeachersManagement: React.FC = () => {
           status: 'active',
           hireDate: '2021-01-10',
           salary: 11000000,
-          experience: 5,
-          rating: 4.8,
-          totalClasses: 52,
-          totalStudents: 380,
+          experience: 4,
+          totalClasses: 30,
+          totalStudents: 210,
           hoursThisMonth: 78,
           bio: 'Giáo viên năng động, chuyên về Speaking và Communication Skills',
           certifications: ['TESOL Certificate', 'Speaking Skills Certificate'],
@@ -119,7 +115,6 @@ const TeachersManagement: React.FC = () => {
           hireDate: '2023-06-01',
           salary: 8000000,
           experience: 2,
-          rating: 4.5,
           totalClasses: 25,
           totalStudents: 180,
           hoursThisMonth: 68,
@@ -137,10 +132,9 @@ const TeachersManagement: React.FC = () => {
           level: 'senior',
           status: 'on-leave',
           hireDate: '2018-09-12',
-          salary: 10000000,
+          salary: 13000000,
           experience: 7,
-          rating: 4.6,
-          totalClasses: 42,
+          totalClasses: 40,
           totalStudents: 250,
           hoursThisMonth: 0,
           bio: 'Chuyên gia giảng dạy tiếng Anh cho trẻ em, có kinh nghiệm với Phonics',
@@ -198,14 +192,7 @@ const TeachersManagement: React.FC = () => {
     }).format(amount);
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${index < Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
+
 
   const handleCreateTeacher = () => {
     setSelectedTeacher(undefined);
@@ -334,7 +321,7 @@ const TeachersManagement: React.FC = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Đánh giá TB</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {(teachers.reduce((total, t) => total + t.rating, 0) / teachers.length).toFixed(1)}
+                  N/A
                 </p>
               </div>
             </div>
@@ -457,15 +444,8 @@ const TeachersManagement: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Rating and Stats */}
+                {/* Stats */}
                 <div className="space-y-3 mb-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Đánh giá:</span>
-                    <div className="flex items-center">
-                      {renderStars(teacher.rating)}
-                      <span className="ml-1 text-sm font-medium">{teacher.rating}</span>
-                    </div>
-                  </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-600">Lớp học:</span>
                     <span className="text-sm font-medium">{teacher.totalClasses}</span>

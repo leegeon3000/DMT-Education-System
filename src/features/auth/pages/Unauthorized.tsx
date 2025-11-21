@@ -23,11 +23,11 @@ const Unauthorized: React.FC = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logout());
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/login', { replace: true });
-    };
-
-    const getRoleDisplayName = (role: string) => {
+    };    const getRoleDisplayName = (role: string) => {
         switch (role) {
             case 'admin': return 'Quản trị viên';
             case 'teacher': return 'Giáo viên';

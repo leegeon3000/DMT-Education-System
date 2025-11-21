@@ -121,9 +121,9 @@ const WhyChooseUs: React.FC = () => {
             <div className="relative">
               {/* Image container - highest z-index */}
               <div className="relative z-50">
-                <img
-                  src="/images/ẢNH-GV/DMT-25-2.jpg"
-                  alt="Giáo viên DMT chuyên nghiệp"
+                                <img
+                  src="/images/ANH-GV/DMT-25-2.png"
+                  alt="DMT Education"
                   className="w-full h-auto rounded-2xl border border-gray-200"
                 />
                 {/* Decorative badge - on top of image */}
@@ -164,7 +164,7 @@ const WhyChooseUs: React.FC = () => {
                     <UserGroupIcon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">10K+</div>
+                    <div className="text-2xl font-bold text-gray-900">2K+</div>
                     <div className="text-xs text-gray-600">Học viên</div>
                   </div>
                 </div>

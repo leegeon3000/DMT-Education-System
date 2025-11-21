@@ -7,9 +7,9 @@ export interface AuthenticatedUser {
   role_id: number;
 }
 
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: AuthenticatedUser;
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: AuthenticatedUser;
   }
 }
 
@@ -34,7 +34,7 @@ export function requireRole(allowedRoles: number[]) {
 // Role constants for easy reference
 export const ROLES = {
   ADMIN: 1,
-  TEACHER: 2,
-  STUDENT: 3,
-  STAFF: 4,
+  STAFF: 2,
+  TEACHER: 3,
+  STUDENT: 4,
 } as const;

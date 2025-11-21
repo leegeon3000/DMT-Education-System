@@ -9,7 +9,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 seconds timeout
+  timeout: 30000, // 30 seconds timeout
 });
 
 // Request interceptor to add auth token
@@ -19,6 +19,7 @@ apiClient.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -26,13 +27,18 @@ apiClient.interceptors.request.use(
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[API] ✓ ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
+    return response;
+  },
   (error) => {
+    console.error(`[API] ✗ ${error.config?.method?.toUpperCase()} ${error.config?.url} -`, error.message);
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      // Unauthorized - clear token but DON'T auto-redirect
+      // Let the component handle redirect logic
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // REMOVED: window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -166,8 +172,10 @@ export const authService = {
 
   logout: () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+    // Let the caller handle navigation
+    // REMOVED: window.location.href = '/login';
   },
 
   getCurrentUser: async (): Promise<User> => {

@@ -184,7 +184,7 @@ const AchievementsSection: React.FC = () => {
               fontSize: '1.1rem'
             }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Star size={16} fill="currentColor" /> Đánh giá 5 sao
+                Chất lượng giảng dạy
               </span>
             </div>
           </div>

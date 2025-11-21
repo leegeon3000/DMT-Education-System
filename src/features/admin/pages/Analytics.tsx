@@ -18,7 +18,7 @@ interface AnalyticsData {
     totalCourses: number;
     activeCourses: number;
     completionRate: number;
-    popularCourses: { name: string; students: number; rating: number }[];
+    popularCourses: { name: string; students: number }[];
     completionTrend: { month: string; rate: number }[];
   };
   revenueStats: {
@@ -133,11 +133,11 @@ const Analytics: React.FC = () => {
           activeCourses: 142,
           completionRate: 78.5,
           popularCourses: [
-            { name: 'Toán 9', students: 245, rating: 4.8 },
-            { name: 'Văn 8', students: 198, rating: 4.6 },
-            { name: 'Tiếng Anh 7', students: 167, rating: 4.7 },
-            { name: 'Lý 10', students: 134, rating: 4.5 },
-            { name: 'Hóa 11', students: 112, rating: 4.4 }
+            { name: 'Toán 9', students: 245 },
+            { name: 'Văn 8', students: 198 },
+            { name: 'Tiếng Anh 7', students: 167 },
+            { name: 'Lý 10', students: 134 },
+            { name: 'Hóa 11', students: 112 }
           ],
           completionTrend: [
             { month: 'T1', rate: 72.3 },

@@ -11,6 +11,9 @@ dotenv.config();
 
 const app = Fastify({ 
   logger: true,
+  connectionTimeout: 30000, // 30s timeout
+  requestTimeout: 10000, // 10s request timeout
+  keepAliveTimeout: 72000 // 72s keep-alive
 });
 
 // Global error handler
@@ -43,13 +46,33 @@ let db: any = null;
 export { db as supabase };
 export { db };
 
-// Health check
-app.get('/health', async () => ({ 
-  status: 'ok', 
-  timestamp: new Date().toISOString(),
-  version: '1.0.0',
-  database: db ? 'connected' : 'not connected'
-}));
+// Health check - NO DEPENDENCIES, fast response
+app.get('/health', async (request, reply) => {
+  reply.send({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
+    database: db ? 'connected' : 'not connected'
+  });
+});
+
+// Readiness check - includes database
+app.get('/ready', async (request, reply) => {
+  if (!db) {
+    return reply.code(503).send({ 
+      status: 'not ready',
+      message: 'Database not connected'
+    });
+  }
+  reply.send({ 
+    status: 'ready',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: 'connected',
+      email: process.env.GMAIL_USER ? 'configured' : 'not configured'
+    }
+  });
+});
 
 // Register API routes
 app.register(registerRoutes);

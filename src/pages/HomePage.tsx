@@ -11,6 +11,7 @@ import TeachersShowcase from '../components/home/TeachersShowcase';
 import TestimonialsSlider from '../components/home/TestimonialsSlider';
 import WhyChooseUs from '../components/home/WhyChooseUs';
 import CTASection from '../components/home/CTASection';
+import VisualShowcase from '../components/home/VisualShowcase';
 
 const HomePage: React.FC = () => {
   return (
@@ -33,6 +34,9 @@ const HomePage: React.FC = () => {
         
         {/* Courses Showcase - Các môn học: Toán, Văn, Anh Văn, iSmart */}
         <CoursesShowcase />
+        
+        {/* Visual Showcase - Trải nghiệm học tập với hình ảnh thực tế */}
+        <VisualShowcase />
         
         {/* Teachers Showcase - Đội ngũ giáo viên giỏi */}
         <TeachersShowcase />

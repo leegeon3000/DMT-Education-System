@@ -22,7 +22,7 @@ interface Achievement {
 const achievements: Achievement[] = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1522661067900-ab829854a57f?w=800&h=600&fit=crop&q=80',
+    image: '/images/ANH-HOC-SINH/DMT-25-36.png',
     title: 'Thành tích học tập vượt trội',
     description: 'Học sinh DMT đạt điểm cao trong các kỳ thi THPT QG, vào lớp 10 chuyên',
     stats: '95% đạt điểm 8+',
@@ -31,28 +31,28 @@ const achievements: Achievement[] = [
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1472289065668-ce650ac443d2?w=800&h=600&fit=crop&q=80',
-    title: 'Olympic & Cuộc thi học thuật',
-    description: 'Học sinh giành nhiều giải thưởng Olympic Toán, Văn, Anh các cấp',
-    stats: '150+ giải thưởng/năm',
+    image: '/images/ANH-HOC-SINH/DMT-25-48.png',
+    title: 'Lớp học tương tác & Sáng tạo',
+    description: 'Phương pháp giảng dạy hiện đại, khuyến khích tư duy phản biện và sáng tạo',
+    stats: '100% tương tác',
     gradient: 'from-purple-400 to-pink-500',
     icon: StarIcon
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=600&fit=crop&q=80',
-    title: 'Chứng chỉ Quốc tế',
-    description: 'Học viên đạt IELTS 6.5-7.5, Cambridge, TOEFL với lộ trình chuẩn quốc tế',
-    stats: 'IELTS 7.0 trung bình',
+    image: '/images/ANH-HOC-SINH/DMT-25-38.jpg',
+    title: 'Học viên xuất sắc toàn diện',
+    description: 'Phát triển cả kiến thức, kỹ năng và phẩm chất đạo đức cho học sinh',
+    stats: 'Phát triển 360°',
     gradient: 'from-blue-400 to-cyan-500',
     icon: SparklesIcon
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop&q=80',
-    title: 'Đỗ trường chuyên Top đầu',
-    description: 'Tỷ lệ đỗ vào các trường chuyên uy tín: Lê Hồng Phong, Trần Đại Nghĩa...',
-    stats: '85% đỗ trường chuyên',
+    image: '/images/ANH-HOC-SINH/DMT-25-26_1.png',
+    title: 'Học tập nhóm hiệu quả',
+    description: 'Hoạt động nhóm giúp học sinh phát triển kỹ năng làm việc team và giao tiếp',
+    stats: 'Kỹ năng mềm tốt',
     gradient: 'from-red-400 to-rose-500',
     icon: FireIcon
   }
@@ -110,7 +110,7 @@ const FeaturesGrid: React.FC = () => {
             transition={{ type: "spring", delay: 0.2 }}
             className="inline-block px-4 py-2 bg-gradient-to-r from-red-100 to-rose-100 text-red-600 rounded-full text-sm font-semibold mb-4"
           >
-            🏆 Thành tích nổi bật
+             Thành tích nổi bật
           </motion.span>
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
             Hành trình{' '}
@@ -146,7 +146,7 @@ const FeaturesGrid: React.FC = () => {
                   className="relative h-full bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100"
                 >
                   {/* Image with overlay */}
-                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                     {/* Background pattern */}
                     <div className="absolute inset-0 opacity-5">
                       <div className="absolute inset-0" style={{
@@ -159,6 +159,9 @@ const FeaturesGrid: React.FC = () => {
                       src={achievement.image}
                       alt={achievement.title}
                       className="w-full h-full object-cover relative z-10"
+                      style={{
+                        objectPosition: achievement.image.includes('DMT-25-26_1') ? '50% 30%' : achievement.image.includes('DMT-25-38') ? '50% 20%' : achievement.image.includes('DMT-25-36') ? '50% 15%' : achievement.image.includes('DMT-25-48') ? '50% 20%' : 'top'
+                      }}
                       animate={hoveredId === achievement.id ? { scale: 1.1 } : { scale: 1 }}
                       transition={{ duration: 0.6 }}
                       onError={(e) => {
@@ -203,7 +206,7 @@ const FeaturesGrid: React.FC = () => {
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 2, repeat: Infinity }}
                           >
-                            <span className="text-xl">✨</span>
+                            <span className="text-xl"></span>
                           </motion.div>
                         </div>
                       </div>
@@ -211,7 +214,7 @@ const FeaturesGrid: React.FC = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="p-8 relative">
+                  <div className="p-6 relative">
                     {/* Decorative corner element */}
                     <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${achievement.gradient} opacity-5 rounded-bl-3xl`} />
                     
