@@ -416,7 +416,7 @@ cp Backend/.env.example Backend/.env
 # Login: admin@dmt.edu.vn / Admin@123
 ```
 
-### Windows (SQL Server Express)
+### Windows (SQL Server Express)  
 
 ```cmd
 REM 1. Clone và install
@@ -621,15 +621,11 @@ REM https://docs.microsoft.com/en-us/sql/tools/sqlcmd-utility
 REM Hoặc dùng SSMS để chạy SQL scripts (khuyến nghị cho Windows)
 ```
 
-Chi tiết đầy đủ xem tại: `Z-docs/TROUBLESHOOTING.md`
-
 ---
 
 ### Nhân viên
 - Email: `staff1@dmt.edu.vn`
 - Password: `Staff@123`
-
-Chi tiết đầy đủ xem tại: `Z-docs/DEMO_ACCOUNTS.md`
 
 ## API Documentation
 
@@ -742,70 +738,6 @@ node generate-password-hash.mjs
 ./stop-dev.sh
 ```
 
-## Migration Progress
-
-### Completed (5/11 Admin Pages)
-- Dashboard - Tổng quan hệ thống
-- Students - Quản lý học sinh
-- Teachers - Quản lý giáo viên
-- Classes - Quản lý lớp học
-- Staff - Quản lý nhân viên
-
-### In Progress
-- Payments - Quản lý thanh toán
-- Finance Report - Báo cáo tài chính
-- Attendance - Báo cáo điểm danh
-- Performance - Báo cáo hiệu suất
-- Analytics - Phân tích dữ liệu
-- Settings - Cài đặt hệ thống
-
-## Troubleshooting
-
-### Backend không kết nối được Database
-```bash
-# Kiểm tra SQL Server đang chạy
-docker ps | grep sql
-
-# Test connection
-cd Backend
-node scripts/test-connection.mjs
-
-# Kiểm tra credentials trong .env
-cat Backend/.env | grep DB_
-```
-
-### Frontend không gọi được API
-```bash
-# Kiểm tra backend đang chạy
-curl http://localhost:3001/health
-
-# Kiểm tra CORS settings
-cat Backend/src/server.ts | grep cors
-
-# Kiểm tra environment variables
-cat .env | grep VITE_API_URL
-```
-
-### Build errors
-```bash
-# Clear cache và reinstall
-rm -rf node_modules package-lock.json
-npm install
-
-# Clear Vite cache
-rm -rf .vite
-npm run dev
-```
-
-Chi tiết đầy đủ xem tại: `Z-docs/TROUBLESHOOTING.md`
-
-## Git Workflow
-
-### Branch strategy
-- `master` - Production branch
-- `feature/*` - Feature development
-- `hotfix/*` - Emergency fixes
-
 ### Commit conventions
 ```bash
 feat: Thêm tính năng mới
@@ -817,43 +749,6 @@ test: Thêm tests
 chore: Maintenance tasks
 ```
 
-Chi tiết xem tại: `Z-docs/GIT_COMMIT_GUIDE.md`
-
-## Documentation
-
-- `Backend/README_API.md` - API documentation
-- `Backend/DATABASE_DOCUMENTATION.md` - Database schema
-- `Backend/STORED_PROCEDURES_GUIDE.md` - Stored procedures guide
-- `Backend/SQLSERVER_SETUP.md` - SQL Server setup
-- `Z-docs/CREDENTIALS.md` - System credentials
-- `Z-docs/DEMO_ACCOUNTS.md` - Demo account list
-- `Z-docs/TROUBLESHOOTING.md` - Common issues
-- `Z-docs/SRS.md` - Software requirements specification
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is private and proprietary to DMT Education Center.
-
-## Support
-
-For support, please contact:
-- Email: support@dmt.edu.vn
-- Phone: +84 xxx xxx xxx
-
 ## Team
 
 Developed by DMT Education Center Development Team
-
----
-
-Last updated: November 2025
