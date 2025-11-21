@@ -17,7 +17,31 @@ import {
   XCircle,
   CalendarDays
 } from 'lucide-react';
+import { apiClient } from '../../../services/auth';
 
+// API response interface (uppercase fields from SQL Server)
+interface ClassFromAPI {
+  ID: number;
+  CODE: string;
+  NAME: string;
+  COURSE_ID: number;
+  TEACHER_ID: number;
+  CAPACITY: number;
+  CURRENT_STUDENTS: number;
+  START_DATE: string;
+  END_DATE: string;
+  SCHEDULE_DAYS: string;
+  SCHEDULE_TIME: string;
+  CLASSROOM: string;
+  STATUS: string;
+  CREATED_AT: string;
+  course_name: string;
+  subject_id: number;
+  subject_name: string;
+  teacher_name: string;
+}
+
+// Normalized interface for component use (lowercase)
 interface Class {
   id: string;
   name: string;
@@ -37,6 +61,54 @@ interface Class {
   days: string[];
   time: string;
 }
+
+// Helper function to normalize API data to component interface
+const normalizeClass = (apiClass: ClassFromAPI): Class => {
+  // Map SQL Server status to component status
+  const statusMap: { [key: string]: 'upcoming' | 'ongoing' | 'completed' | 'cancelled' } = {
+    'PLANNING': 'upcoming',
+    'ACTIVE': 'ongoing',
+    'COMPLETED': 'completed',
+    'CANCELLED': 'cancelled'
+  };
+
+  // Parse schedule days (e.g., "MONDAY,WEDNESDAY" -> ["Thứ 2", "Thứ 4"])
+  const dayMap: { [key: string]: string } = {
+    'MONDAY': 'Thứ 2',
+    'TUESDAY': 'Thứ 3',
+    'WEDNESDAY': 'Thứ 4',
+    'THURSDAY': 'Thứ 5',
+    'FRIDAY': 'Thứ 6',
+    'SATURDAY': 'Thứ 7',
+    'SUNDAY': 'Chủ nhật'
+  };
+
+  const scheduleDays = apiClass.SCHEDULE_DAYS 
+    ? apiClass.SCHEDULE_DAYS.split(',').map(day => dayMap[day.trim()] || day)
+    : [];
+
+  const scheduleTime = apiClass.SCHEDULE_TIME || '';
+
+  return {
+    id: apiClass.ID.toString(),
+    name: apiClass.NAME,
+    courseId: apiClass.COURSE_ID.toString(),
+    courseName: apiClass.course_name || 'N/A',
+    teacherId: apiClass.TEACHER_ID.toString(),
+    teacherName: apiClass.teacher_name || 'N/A',
+    schedule: scheduleDays.map(day => `${day}: ${scheduleTime}`),
+    startDate: apiClass.START_DATE ? apiClass.START_DATE.split('T')[0] : '',
+    endDate: apiClass.END_DATE ? apiClass.END_DATE.split('T')[0] : '',
+    totalSessions: 24, // Default, could be calculated
+    completedSessions: 0, // Not available in current schema
+    room: apiClass.CLASSROOM || 'N/A',
+    capacity: apiClass.CAPACITY,
+    enrolledStudents: apiClass.CURRENT_STUDENTS,
+    status: statusMap[apiClass.STATUS] || 'upcoming',
+    days: scheduleDays,
+    time: scheduleTime
+  };
+};
 
 interface Course {
   id: string;
@@ -554,128 +626,28 @@ const ClassesPage: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // Mock data for classes
-    const mockClasses: Class[] = [
-      {
-        id: 'class1',
-        name: 'Toán nâng cao A1',
-        courseId: 'course1',
-        courseName: 'Toán học nâng cao',
-        teacherId: 'teacher1',
-        teacherName: 'Nguyễn Văn Anh',
-        schedule: ['Thứ 2: 18:00-20:00', 'Thứ 4: 18:00-20:00'],
-        startDate: '2025-06-01',
-        endDate: '2025-09-01',
-        totalSessions: 24,
-        completedSessions: 8,
-        room: 'P.101',
-        capacity: 30,
-        enrolledStudents: 25,
-        status: 'ongoing',
-        days: ['Thứ 2', 'Thứ 4'],
-        time: '18:00 - 20:00'
-      },
-      {
-        id: 'class2',
-        name: 'Tiếng Anh giao tiếp B1',
-        courseId: 'course2',
-        courseName: 'Tiếng Anh giao tiếp',
-        teacherId: 'teacher2',
-        teacherName: 'Trần Thị Bình',
-        schedule: ['Thứ 3: 18:00-20:00', 'Thứ 5: 18:00-20:00'],
-        startDate: '2025-07-01',
-        endDate: '2025-10-01',
-        totalSessions: 24,
-        completedSessions: 4,
-        room: 'P.102',
-        capacity: 25,
-        enrolledStudents: 20,
-        status: 'ongoing',
-        days: ['Thứ 3', 'Thứ 5'],
-        time: '18:00 - 20:00'
-      },
-      {
-        id: 'class3',
-        name: 'Vật lý đại cương A1',
-        courseId: 'course3',
-        courseName: 'Vật lý đại cương',
-        teacherId: 'teacher3',
-        teacherName: 'Lê Văn Cường',
-        schedule: ['Thứ 7: 8:00-11:30'],
-        startDate: '2025-05-15',
-        endDate: '2025-08-15',
-        totalSessions: 12,
-        completedSessions: 12,
-        room: 'P.201',
-        capacity: 40,
-        enrolledStudents: 35,
-        status: 'completed',
-        days: ['Thứ 7'],
-        time: '8:00 - 11:30'
-      },
-      {
-        id: 'class4',
-        name: 'Hóa học cơ bản A1',
-        courseId: 'course4',
-        courseName: 'Hóa học cơ bản',
-        teacherId: 'teacher4',
-        teacherName: 'Phạm Thị Dung',
-        schedule: ['Thứ 6: 18:00-20:00', 'Chủ nhật: 8:00-10:00'],
-        startDate: '2025-08-01',
-        endDate: '2025-11-01',
-        totalSessions: 24,
-        completedSessions: 0,
-        room: 'P.202',
-        capacity: 35,
-        enrolledStudents: 15,
-        status: 'upcoming',
-        days: ['Thứ 6', 'Chủ nhật'],
-        time: 'T6: 18:00-20:00, CN: 8:00-10:00'
-      },
-      {
-        id: 'class5',
-        name: 'Python cơ bản',
-        courseId: 'course5',
-        courseName: 'Lập trình Python',
-        teacherId: 'teacher1',
-        teacherName: 'Nguyễn Văn Anh',
-        schedule: ['Thứ 3: 18:00-20:00', 'Thứ 7: 14:00-16:00'],
-        startDate: '2025-07-15',
-        endDate: '2025-09-15',
-        totalSessions: 16,
-        completedSessions: 0,
-        room: 'P.301',
-        capacity: 20,
-        enrolledStudents: 18,
-        status: 'upcoming',
-        days: ['Thứ 3', 'Thứ 7'],
-        time: 'T3: 18:00-20:00, T7: 14:00-16:00'
-      },
-      {
-        id: 'class6',
-        name: 'Văn học và sáng tác',
-        courseId: 'course6',
-        courseName: 'Ngữ văn và văn học',
-        teacherId: 'teacher2',
-        teacherName: 'Trần Thị Bình',
-        schedule: ['Thứ 4: 18:00-20:00', 'Thứ 6: 18:00-20:00'],
-        startDate: '2025-06-15',
-        endDate: '2025-09-15',
-        totalSessions: 24,
-        completedSessions: 6,
-        room: 'P.302',
-        capacity: 15,
-        enrolledStudents: 10,
-        status: 'ongoing',
-        days: ['Thứ 4', 'Thứ 6'],
-        time: '18:00 - 20:00'
+    const fetchClasses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.get('/classes', {
+          params: {
+            limit: 100  // Get all classes
+          }
+        });
+
+        if (response.data.success) {
+          const normalizedClasses = response.data.data.map(normalizeClass);
+          setClasses(normalizedClasses);
+        }
+      } catch (error) {
+        console.error('Error fetching classes:', error);
+        setClasses([]);
+      } finally {
+        setIsLoading(false);
       }
-    ];
-    
-    setTimeout(() => {
-      setClasses(mockClasses);
-      setIsLoading(false);
-    }, 1000);
+    };
+
+    fetchClasses();
   }, []);
   
   const filteredClasses = classes.filter(cls => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Search, 
   Filter, 
@@ -15,35 +15,70 @@ import {
   Eye
 } from 'lucide-react';
 import Spinner from '../../../components/common/Spinner';
+import { apiClient } from '../../../services/auth';
 
 interface Student {
+  ID?: number;
+  id?: string;
+  USER_ID?: number;
+  STUDENT_CODE?: string;
+  student_code?: string;
+  SCHOOL_LEVEL?: string;
+  school_level?: string;
+  schoolLevel?: string; // normalized field
+  PARENT_NAME?: string;
+  parent_name?: string;
+  parentName?: string; // normalized field
+  PARENT_PHONE?: string;
+  parent_phone?: string;
+  parentPhone?: string; // normalized field
+  PARENT_EMAIL?: string;
+  parent_email?: string;
+  email?: string;
+  full_name?: string;
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  birth_date?: string;
+  status?: boolean | string;
+  created_at?: string;
+  joinDate?: string;
+  studentCode?: string; // normalized field
+  enrollments?: any[];
+  classes?: string[];
+}
+
+// Normalized student type (after processing API data)
+interface NormalizedStudent {
   id: string;
   fullName: string;
   email: string;
   phone: string;
   status: 'active' | 'inactive';
-  grade: string;
+  schoolLevel: string;
   joinDate: string;
   parentName?: string;
   parentPhone?: string;
+  studentCode?: string;
   classes: string[];
 }
 
-const mockStudents: Student[] = Array.from({ length: 50 }, (_, idx) => ({
-  id: `STD${(idx + 1).toString().padStart(4, '0')}`,
-  fullName: ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Hoàng Cường', 'Phạm Minh Đức', 'Hoàng Thị Em'][idx % 5] + ` ${idx + 1}`,
-  email: `student${idx + 1}@example.com`,
-  phone: `09${Math.floor(10000000 + Math.random() * 90000000)}`,
-  status: Math.random() > 0.2 ? 'active' : 'inactive',
-  grade: ['Lớp 10', 'Lớp 11', 'Lớp 12', 'Ôn thi đại học'][idx % 4],
-  joinDate: new Date(2023, idx % 12, Math.floor(1 + Math.random() * 28)).toLocaleDateString('vi-VN'),
-  parentName: Math.random() > 0.3 ? ['Nguyễn Văn Cao', 'Trần Văn Dũng', 'Lê Văn Hùng'][idx % 3] : undefined,
-  parentPhone: Math.random() > 0.3 ? `09${Math.floor(10000000 + Math.random() * 90000000)}` : undefined,
-  classes: Array.from(
-    { length: Math.floor(1 + Math.random() * 3) }, 
-    () => ['Toán cao cấp', 'Vật lý nâng cao', 'Hóa học cơ bản', 'Tiếng Anh giao tiếp', 'Ngữ văn'][Math.floor(Math.random() * 5)]
-  )
-}));
+// Helper function to normalize student data from API
+const normalizeStudent = (student: Student): NormalizedStudent => {
+  return {
+    id: student.ID?.toString() || student.id || '',
+    fullName: student.full_name || student.fullName || '',
+    email: student.email || '',
+    phone: student.phone || '',
+    status: student.status === true || student.status === 'active' ? 'active' : 'inactive',
+    schoolLevel: student.SCHOOL_LEVEL || student.school_level || '',
+    joinDate: student.created_at || student.joinDate || '',
+    parentName: student.PARENT_NAME || student.parent_name,
+    parentPhone: student.PARENT_PHONE || student.parent_phone,
+    studentCode: student.STUDENT_CODE || student.student_code,
+    classes: student.classes || []
+  };
+};
 
 interface StudentModalProps {
   student?: Student;
@@ -56,7 +91,7 @@ const StudentModal: React.FC<StudentModalProps> = ({ student, onClose, onSave })
   const [form, setForm] = useState<Partial<Student>>(
     student || {
       status: 'active',
-      grade: 'Lớp 10',
+      schoolLevel: 'Lớp 10',
       classes: []
     }
   );
@@ -128,8 +163,8 @@ const StudentModal: React.FC<StudentModalProps> = ({ student, onClose, onSave })
                 Khối lớp
               </label>
               <select
-                name="grade"
-                value={form.grade || 'Lớp 10'}
+                name="schoolLevel"
+                value={form.schoolLevel || 'Lớp 10'}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
@@ -148,7 +183,7 @@ const StudentModal: React.FC<StudentModalProps> = ({ student, onClose, onSave })
               <input
                 type="text"
                 name="parentName"
-                value={form.parentName || ''}
+                value={form.parent_name || ''}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
@@ -161,7 +196,7 @@ const StudentModal: React.FC<StudentModalProps> = ({ student, onClose, onSave })
               <input
                 type="tel"
                 name="parentPhone"
-                value={form.parentPhone || ''}
+                value={form.parent_phone || ''}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
@@ -173,7 +208,7 @@ const StudentModal: React.FC<StudentModalProps> = ({ student, onClose, onSave })
               </label>
               <select
                 name="status"
-                value={form.status || 'active'}
+                value={typeof form.status === 'string' ? form.status : 'active'}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                 required
@@ -212,36 +247,68 @@ const StudentsManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalStudents, setTotalStudents] = useState(0);
   const [selectedStudent, setSelectedStudent] = useState<Student | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actionStudent, setActionStudent] = useState<Student | null>(null);
   
   const pageSize = 10;
 
-  useEffect(() => {
-    // Simulate API fetch
-    const timer = setTimeout(() => {
-      setStudents(mockStudents);
+  // Fetch students from API
+  const fetchStudents = async () => {
+    try {
+      setLoading(true);
+      const params: any = {
+        page: currentPage,
+        limit: pageSize
+      };
+      
+      if (searchTerm) params.search = searchTerm;
+      if (statusFilter !== 'all') params.status = statusFilter === 'active' ? 'active' : 'inactive';
+      if (gradeFilter !== 'all') params.school_level = gradeFilter;
+
+      const response = await apiClient.get('/students', { params });
+      
+      if (response.data.success) {
+        setStudents(response.data.data);
+        setTotalStudents(response.data.pagination.total);
+      }
+    } catch (error) {
+      console.error('Failed to fetch students:', error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, [currentPage, statusFilter, gradeFilter]);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentPage === 1) {
+        fetchStudents();
+      } else {
+        setCurrentPage(1);
+      }
+    }, 500);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [searchTerm]);
 
-  const filteredStudents = students.filter(student => {
-    const matchesSearch = 
-      student.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.phone.includes(searchTerm);
-      
-    const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
-    const matchesGrade = gradeFilter === 'all' || student.grade === gradeFilter;
-    
-    return matchesSearch && matchesStatus && matchesGrade;
-  });
+  // Normalize students từ API (uppercase fields)
+  const normalizedStudents = useMemo(() => 
+    students.map(normalizeStudent),
+    [students]
+  );
   
-  const totalPages = Math.ceil(filteredStudents.length / pageSize);
-  const paginatedStudents = filteredStudents.slice(
+  // Compute total pages based on totalStudents from API
+  const totalPages = Math.ceil(totalStudents / pageSize);
+  
+  // Filter is now handled by API backend via search, school_level, status params
+  // Client-side pagination (API supports server-side pagination)
+  const paginatedStudents = normalizedStudents.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -390,7 +457,7 @@ const StudentsManagement: React.FC = () => {
                       <div className="text-xs text-gray-500">{student.phone}</div>
                     </div>
                   </td>
-                  <td className="py-3 px-4">{student.grade}</td>
+                  <td className="py-3 px-4">{student.schoolLevel}</td>
                   <td className="py-3 px-4">
                     <span 
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -415,18 +482,24 @@ const StudentsManagement: React.FC = () => {
                   <td className="py-3 px-4">{student.joinDate}</td>
                   <td className="py-3 px-4">
                     <div className="flex flex-wrap gap-1">
-                      {student.classes.slice(0, 2).map((cls, idx) => (
-                        <span 
-                          key={idx} 
-                          className="bg-primary-50 text-primary-700 px-2 py-0.5 rounded text-xs"
-                        >
-                          {cls}
-                        </span>
-                      ))}
-                      {student.classes.length > 2 && (
-                        <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">
-                          +{student.classes.length - 2}
-                        </span>
+                      {student.classes && student.classes.length > 0 ? (
+                        <>
+                          {student.classes.slice(0, 2).map((cls, idx) => (
+                            <span 
+                              key={idx} 
+                              className="bg-primary-50 text-primary-700 px-2 py-0.5 rounded text-xs"
+                            >
+                              {cls}
+                            </span>
+                          ))}
+                          {student.classes.length > 2 && (
+                            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">
+                              +{student.classes.length - 2}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-xs text-gray-400">Chưa tham gia</span>
                       )}
                     </div>
                   </td>
@@ -447,7 +520,7 @@ const StudentsManagement: React.FC = () => {
                         <Edit size={18} />
                       </button>
                       <button
-                        onClick={() => handleDeleteStudent(student.id)}
+                        onClick={() => student.id && handleDeleteStudent(student.id)}
                         className="text-red-500 hover:text-red-700 transition-colors"
                         title="Xóa"
                       >
@@ -472,8 +545,8 @@ const StudentsManagement: React.FC = () => {
         {/* Pagination */}
         <div className="py-3 px-4 border-t border-gray-200 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Hiển thị {paginatedStudents.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, filteredStudents.length)} 
-            {' '}trong số {filteredStudents.length} học sinh
+            Hiển thị {paginatedStudents.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, totalStudents)} 
+            {' '}trong số {totalStudents} học sinh
           </p>
           <div className="flex gap-1">
             <button

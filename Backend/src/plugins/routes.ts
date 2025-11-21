@@ -2,18 +2,18 @@ import { FastifyInstance } from 'fastify';
 import { authRoutes } from '../routes/auth';
 import { usersRoutes } from '../routes/users';
 import { rolesRoutes } from '../routes/roles';
-import { studentsRoutes } from '../routes/students';
-import { teachersRoutes } from '../routes/teachers';
+import { studentsRoutes } from '../routes/students-sqlserver'; // SQL Server version
+import { teachersRoutes } from '../routes/teachers-sqlserver'; // SQL Server version
 import { subjectsRoutes } from '../routes/subjects';
 import { coursesRoutes } from '../routes/courses';
-import { classesRoutes } from '../routes/classes';
+import { classesRoutes } from '../routes/classes-sqlserver.js'; // SQL Server version
 import { enrollmentsRoutes } from '../routes/enrollments';
 import { attendanceRoutes } from '../routes/attendance';
 import { assignmentsRoutes } from '../routes/assignments';
 import { materialsRoutes } from '../routes/materials';
 import { paymentsRoutes } from '../routes/payments';
 import { surveysRoutes } from '../routes/surveys';
-import { staffRoutes } from '../routes/staff';
+import staffSqlServerRoutes from '../routes/staff-sqlserver.js'; // SQL Server version
 import { newsRoutes } from '../routes/news';
 import { reportsRoutes } from '../routes/reports';
 import { notificationsRoutes } from '../routes/notifications';
@@ -21,10 +21,18 @@ import { statisticsRoutes } from '../routes/statistics';
 import { activityLogsRoutes } from '../routes/activity-logs';
 import { systemSettingsRoutes } from '../routes/system-settings';
 import { backupRoutes } from '../routes/backup';
+import contactRoutes from '../routes/contact.js';
 
 export default async function registerRoutes(app: FastifyInstance) {
+  console.log('📝 Registering routes...');
+  
   // Core authentication routes - UPDATED WITH STORED PROCEDURES
+  console.log('  ✓ Auth routes');
   await authRoutes(app);
+  
+  // Contact form routes - Email service
+  console.log('  ✓ Contact routes');
+  await app.register(contactRoutes, { prefix: '/api' });
   
   // News routes - ACTIVE FOR SQL SERVER
   await newsRoutes(app);
@@ -49,7 +57,7 @@ export default async function registerRoutes(app: FastifyInstance) {
   // Entity management routes - ACTIVE FOR SQL SERVER
   await studentsRoutes(app);
   await teachersRoutes(app);    // Teachers management - ACTIVE
-  await staffRoutes(app);
+  await app.register(staffSqlServerRoutes, { prefix: '/api' });  // Staff management - SQL Server
   await subjectsRoutes(app);
   await coursesRoutes(app);
   await classesRoutes(app);
@@ -59,5 +67,8 @@ export default async function registerRoutes(app: FastifyInstance) {
   await materialsRoutes(app);
   
   // Survey routes - ACTIVE FOR SQL SERVER
+  console.log('  ✓ Survey routes');
   await surveysRoutes(app);
+  
+  console.log('✅ All routes registered successfully');
 }

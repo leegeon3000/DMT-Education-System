@@ -1,6 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Filter, Edit, Trash2, Star, MoreHorizontal, Download, Mail, Calendar, Phone } from 'lucide-react';
 import { adminService, Teacher } from '../../../services/admin';
+import { apiClient } from '../../../services/auth';
+
+// API response interface (uppercase fields from SQL Server)
+interface TeacherFromAPI {
+  ID: number;
+  USER_ID: number;
+  TEACHER_CODE: string;
+  SPECIALIZATION: string;
+  HIRE_DATE: string;
+  STATUS: string;
+  CREATED_AT: string;
+  full_name: string;
+  email: string;
+  phone: string;
+}
+
+// Helper function to normalize API data to component interface
+const normalizeTeacher = (apiTeacher: TeacherFromAPI): Teacher => {
+  // Parse specialization (e.g., "Toán học, Vật lý" -> ["Toán học", "Vật lý"])
+  const specialization = apiTeacher.SPECIALIZATION 
+    ? apiTeacher.SPECIALIZATION.split(',').map(s => s.trim())
+    : [];
+
+  // Map SQL Server status to component status
+  const statusMap: { [key: string]: 'active' | 'inactive' | 'on_leave' } = {
+    'ACTIVE': 'active',
+    'INACTIVE': 'inactive',
+    'ON_LEAVE': 'on_leave'
+  };
+
+  return {
+    id: apiTeacher.ID.toString(),
+    fullName: apiTeacher.full_name || 'N/A',
+    email: apiTeacher.email || 'N/A',
+    phone: apiTeacher.phone || 'N/A',
+    specialization,
+    bio: '', // Not available in current schema
+    hireDate: apiTeacher.HIRE_DATE ? apiTeacher.HIRE_DATE.split('T')[0] : '',
+    status: statusMap[apiTeacher.STATUS] || 'active',
+    courseIds: [], // Not available in current schema
+    rating: 4.5, // Default, not available in current schema
+    qualifications: [], // Not available in current schema
+    profileImage: undefined // Not available in current schema
+  };
+};
 
 const specializations = [
   'Toán học', 'Vật lý', 'Hóa học', 'Sinh học', 
@@ -323,98 +368,24 @@ const TeachersPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    // Mock data for demo purposes
-    const mockTeachers: Teacher[] = [
-      {
-        id: '1',
-        fullName: 'Nguyễn Văn Anh',
-        email: 'nguyenvananh@dmt.edu.vn',
-        phone: '0912345678',
-        specialization: ['Toán học', 'Vật lý'],
-        bio: 'Giáo viên dạy Toán với hơn 10 năm kinh nghiệm. Chuyên dạy luyện thi đại học và các kỳ thi quốc tế.',
-        hireDate: '2018-06-15',
-        status: 'active',
-        courseIds: ['course1', 'course2', 'course3'],
-        rating: 4.8,
-        qualifications: ['Thạc sĩ Toán học ứng dụng', 'Chứng chỉ sư phạm xuất sắc'],
-        profileImage: 'https://randomuser.me/api/portraits/men/42.jpg'
-      },
-      {
-        id: '2',
-        fullName: 'Trần Thị Bình',
-        email: 'tranthibinh@dmt.edu.vn',
-        phone: '0923456789',
-        specialization: ['Tiếng Anh', 'Ngữ văn'],
-        bio: 'Giáo viên tiếng Anh với chứng chỉ IELTS 8.0, có kinh nghiệm giảng dạy tại các trung tâm tiếng Anh hàng đầu.',
-        hireDate: '2019-08-20',
-        status: 'active',
-        courseIds: ['course4', 'course5'],
-        rating: 4.5,
-        qualifications: ['Cử nhân Ngôn ngữ Anh', 'TESOL', 'IELTS 8.0'],
-        profileImage: 'https://randomuser.me/api/portraits/women/42.jpg'
-      },
-      {
-        id: '3',
-        fullName: 'Lê Văn Cường',
-        email: 'levancuong@dmt.edu.vn',
-        phone: '0934567890',
-        specialization: ['Vật lý', 'Hóa học', 'Sinh học'],
-        bio: 'Tiến sĩ Vật lý, từng công tác tại Viện Khoa học và Công nghệ Việt Nam. Chuyên dạy Vật lý và Hóa học.',
-        hireDate: '2017-03-10',
-        status: 'on_leave',
-        courseIds: ['course6'],
-        rating: 4.9,
-        qualifications: ['Tiến sĩ Vật lý', 'Nghiên cứu sinh tại Đại học Tokyo'],
-        profileImage: 'https://randomuser.me/api/portraits/men/32.jpg'
-      },
-      {
-        id: '4',
-        fullName: 'Phạm Thị Dung',
-        email: 'phamthidung@dmt.edu.vn',
-        phone: '0945678901',
-        specialization: ['Tiếng Việt', 'Lịch sử', 'Địa lý'],
-        bio: 'Giáo viên dạy Văn - Sử - Địa với phương pháp giảng dạy sáng tạo, giúp học sinh dễ hiểu và ghi nhớ kiến thức.',
-        hireDate: '2020-02-15',
-        status: 'active',
-        courseIds: ['course7', 'course8', 'course9', 'course10'],
-        rating: 4.3,
-        qualifications: ['Cử nhân Sư phạm Ngữ văn', 'Thạc sĩ Việt Nam học'],
-        profileImage: 'https://randomuser.me/api/portraits/women/33.jpg'
-      },
-      {
-        id: '5',
-        fullName: 'Hoàng Văn Emm',
-        email: 'hoangvanemm@dmt.edu.vn',
-        phone: '0956789012',
-        specialization: ['Tin học', 'Toán học'],
-        bio: 'Kỹ sư CNTT, chuyên gia về lập trình và thuật toán. Giảng dạy Tin học và Toán cho học sinh từ cấp 2 đến cấp 3.',
-        hireDate: '2021-01-05',
-        status: 'inactive',
-        courseIds: [],
-        rating: 4.0,
-        qualifications: ['Kỹ sư Công nghệ thông tin', 'Chứng chỉ Microsoft Expert'],
-        profileImage: 'https://randomuser.me/api/portraits/men/22.jpg'
-      },
-      {
-        id: '6',
-        fullName: 'Mai Thị Phương',
-        email: 'maithiphuong@dmt.edu.vn',
-        phone: '0967890123',
-        specialization: ['Nghệ thuật', 'Âm nhạc'],
-        bio: 'Giáo viên nghệ thuật với nhiều năm kinh nghiệm dạy vẽ và âm nhạc. Từng tốt nghiệp Học viện Âm nhạc Quốc gia Việt Nam.',
-        hireDate: '2019-11-20',
-        status: 'active',
-        courseIds: ['course11', 'course12'],
-        rating: 4.7,
-        qualifications: ['Cử nhân Mỹ thuật', 'Chứng chỉ Piano bậc 8'],
-        profileImage: 'https://randomuser.me/api/portraits/women/24.jpg'
+    const fetchTeachers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.get('/teachers');
+
+        if (response.data.success) {
+          const normalizedTeachers = response.data.data.map(normalizeTeacher);
+          setTeachers(normalizedTeachers);
+        }
+      } catch (error) {
+        console.error('Error fetching teachers:', error);
+        setTeachers([]);
+      } finally {
+        setIsLoading(false);
       }
-    ];
-    
-    setTimeout(() => {
-      setTeachers(mockTeachers);
-      setIsLoading(false);
-    }, 1000);
+    };
+
+    fetchTeachers();
   }, []);
 
   const filteredTeachers = teachers.filter(teacher => {

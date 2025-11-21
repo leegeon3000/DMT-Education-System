@@ -4,7 +4,23 @@ import {
   Mail, Phone, Calendar, CheckCircle, XCircle, Clock,
   Download, UserCog, ShieldCheck, Award 
 } from 'lucide-react';
+import { apiClient } from '../../../services/auth';
 
+// API response interface (uppercase fields from SQL Server)
+interface StaffFromAPI {
+  ID: number;
+  USER_ID: number;
+  STAFF_CODE: string;
+  DEPARTMENT: string;
+  POSITION: string;
+  CREATED_AT: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  status: string;
+}
+
+// Normalized interface for component use
 interface StaffMember {
   id: string;
   fullName: string;
@@ -23,6 +39,35 @@ interface StaffMember {
   performanceRating?: number;
   responsibilities: string[];
 }
+
+// Helper function to normalize API data
+const normalizeStaff = (apiStaff: StaffFromAPI): StaffMember => {
+  // Map SQL Server status to component status
+  const statusMap: { [key: string]: 'active' | 'on_leave' | 'inactive' } = {
+    'ACTIVE': 'active',
+    'INACTIVE': 'inactive',
+    'ON_LEAVE': 'on_leave'
+  };
+
+  return {
+    id: apiStaff.ID.toString(),
+    fullName: apiStaff.full_name || 'N/A',
+    email: apiStaff.email || 'N/A',
+    phone: apiStaff.phone || 'N/A',
+    position: apiStaff.POSITION || 'N/A',
+    department: apiStaff.DEPARTMENT || 'N/A',
+    joinDate: apiStaff.CREATED_AT ? apiStaff.CREATED_AT.split('T')[0] : '',
+    status: statusMap[apiStaff.status] || 'active',
+    avatar: undefined,
+    skills: [],
+    address: undefined,
+    emergencyContact: undefined,
+    salary: undefined,
+    leaveBalance: 0,
+    performanceRating: undefined,
+    responsibilities: []
+  };
+};
 
 const positions = [
   'Quản lý', 'Kế toán', 'Nhân sự', 'Lễ tân',
@@ -525,152 +570,24 @@ const StaffPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    // Mock data for demo purposes
-    const mockStaff: StaffMember[] = [
-      {
-        id: '1',
-        fullName: 'Nguyễn Văn An',
-        email: 'nguyenvanan@dmt.edu.vn',
-        phone: '0912345678',
-        position: 'Quản lý',
-        department: 'Ban Giám đốc',
-        joinDate: '2018-05-10',
-        status: 'active',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-        skills: ['Quản lý nhân sự', 'Quản lý dự án', 'Thương lượng'],
-        address: '123 Đường Lê Lợi, Quận 1, TP.HCM',
-        emergencyContact: 'Nguyễn Thị Hoa - 0987654321',
-        salary: 20000000,
-        leaveBalance: 15,
-        performanceRating: 4.8,
-        responsibilities: [
-          'Quản lý toàn bộ hoạt động của trung tâm',
-          'Xây dựng chiến lược phát triển',
-          'Quản lý nhân sự cấp cao',
-          'Đàm phán hợp đồng và quan hệ đối tác'
-        ]
-      },
-      {
-        id: '2',
-        fullName: 'Trần Thị Bình',
-        email: 'tranthibinh@dmt.edu.vn',
-        phone: '0923456789',
-        position: 'Kế toán',
-        department: 'Tài chính',
-        joinDate: '2019-07-15',
-        status: 'active',
-        avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-        skills: ['Kế toán', 'Excel', 'Báo cáo tài chính'],
-        address: '456 Đường Nguyễn Huệ, Quận 1, TP.HCM',
-        emergencyContact: 'Trần Văn Cường - 0976543210',
-        salary: 15000000,
-        leaveBalance: 12,
-        performanceRating: 4.5,
-        responsibilities: [
-          'Quản lý sổ sách kế toán',
-          'Lập báo cáo tài chính hàng tháng/quý/năm',
-          'Quản lý lương và phúc lợi nhân viên',
-          'Xử lý các vấn đề thuế'
-        ]
-      },
-      {
-        id: '3',
-        fullName: 'Lê Văn Cường',
-        email: 'levancuong@dmt.edu.vn',
-        phone: '0934567890',
-        position: 'IT',
-        department: 'IT',
-        joinDate: '2020-03-20',
-        status: 'active',
-        avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-        skills: ['Quản trị mạng', 'Bảo mật', 'Hỗ trợ kỹ thuật'],
-        address: '789 Đường Lý Tự Trọng, Quận 1, TP.HCM',
-        emergencyContact: 'Lê Thị Dung - 0965432109',
-        salary: 18000000,
-        leaveBalance: 10,
-        performanceRating: 4.7,
-        responsibilities: [
-          'Quản trị hệ thống CNTT của trung tâm',
-          'Bảo mật thông tin và dữ liệu',
-          'Hỗ trợ kỹ thuật cho nhân viên',
-          'Phát triển và bảo trì website'
-        ]
-      },
-      {
-        id: '4',
-        fullName: 'Phạm Thị Dung',
-        email: 'phamthidung@dmt.edu.vn',
-        phone: '0945678901',
-        position: 'Lễ tân',
-        department: 'Hành chính',
-        joinDate: '2021-01-05',
-        status: 'on_leave',
-        avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-        skills: ['Chăm sóc khách hàng', 'Tổ chức sự kiện', 'Giao tiếp'],
-        address: '101 Đường Hàm Nghi, Quận 1, TP.HCM',
-        emergencyContact: 'Phạm Văn Em - 0954321098',
-        salary: 10000000,
-        leaveBalance: 8,
-        performanceRating: 4.2,
-        responsibilities: [
-          'Tiếp đón học viên và phụ huynh',
-          'Trả lời thắc mắc và tư vấn sơ bộ',
-          'Quản lý lịch hẹn',
-          'Hỗ trợ công tác văn phòng'
-        ]
-      },
-      {
-        id: '5',
-        fullName: 'Hoàng Văn Em',
-        email: 'hoangvanem@dmt.edu.vn',
-        phone: '0956789012',
-        position: 'Tuyển sinh',
-        department: 'Tuyển sinh',
-        joinDate: '2020-09-15',
-        status: 'active',
-        avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-        skills: ['Tư vấn', 'Đàm phán', 'Marketing'],
-        address: '202 Đường Đồng Khởi, Quận 1, TP.HCM',
-        emergencyContact: 'Hoàng Thị Phương - 0943210987',
-        salary: 12000000,
-        leaveBalance: 10,
-        performanceRating: 4.0,
-        responsibilities: [
-          'Tư vấn và giới thiệu khóa học',
-          'Thực hiện các chiến dịch tuyển sinh',
-          'Theo dõi và chăm sóc học viên tiềm năng',
-          'Báo cáo kết quả tuyển sinh'
-        ]
-      },
-      {
-        id: '6',
-        fullName: 'Mai Thị Phương',
-        email: 'maithiphuong@dmt.edu.vn',
-        phone: '0967890123',
-        position: 'Marketing',
-        department: 'Marketing',
-        joinDate: '2019-11-10',
-        status: 'inactive',
-        avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
-        skills: ['Digital Marketing', 'Content Creation', 'SEO'],
-        address: '303 Đường Nguyễn Du, Quận 1, TP.HCM',
-        emergencyContact: 'Mai Văn Giang - 0932109876',
-        salary: 14000000,
-        leaveBalance: 0,
-        performanceRating: 3.8,
-        responsibilities: [
-          'Lập kế hoạch marketing',
-          'Quản lý mạng xã hội và nội dung',
-          'Tổ chức sự kiện quảng bá',
-          'Phân tích hiệu quả marketing'
-        ]
+    const fetchStaff = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.get('/staff');
+
+        if (response.data.success) {
+          const normalizedStaff = response.data.data.map(normalizeStaff);
+          setStaff(normalizedStaff);
+        }
+      } catch (error) {
+        console.error('Error fetching staff:', error);
+        setStaff([]);
+      } finally {
+        setIsLoading(false);
       }
-    ];
-    
-    setTimeout(() => {
-      setStaff(mockStaff);
-      setIsLoading(false);
-    }, 1000);
+    };
+
+    fetchStaff();
   }, []);
 
   const filteredStaff = staff.filter(member => {
