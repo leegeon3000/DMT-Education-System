@@ -1,4 +1,5 @@
 import React from 'react';
+import { Lightbulb, ShieldAlert, Home, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../store/slices/userSlice';
@@ -22,11 +23,11 @@ const Unauthorized: React.FC = () => {
     };
 
     const handleLogout = () => {
-        dispatch(logout());
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/login', { replace: true });
-    };
-
-    const getRoleDisplayName = (role: string) => {
+    };    const getRoleDisplayName = (role: string) => {
         switch (role) {
             case 'admin': return 'Quản trị viên';
             case 'teacher': return 'Giáo viên';
@@ -57,10 +58,12 @@ const Unauthorized: React.FC = () => {
                 width: '100%'
             }}>
                 <div style={{
-                    fontSize: '4rem',
-                    marginBottom: '1rem'
+                    marginBottom: '1rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    color: '#dc3545'
                 }}>
-                    🚫
+                    <ShieldAlert size={64} strokeWidth={1.5} />
                 </div>
                 
                 <h1 style={{ 
@@ -142,7 +145,10 @@ const Unauthorized: React.FC = () => {
                             cursor: 'pointer',
                             fontSize: '1rem',
                             fontWeight: '500',
-                            transition: 'all 0.2s ease'
+                            transition: 'all 0.2s ease',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
                         }}
                         onMouseOver={(e) => {
                             e.currentTarget.style.backgroundColor = '#0056b3';
@@ -153,7 +159,7 @@ const Unauthorized: React.FC = () => {
                             e.currentTarget.style.transform = 'translateY(0)';
                         }}
                     >
-                        🏠 Trang chủ
+                        <Home size={18} /> Trang chủ
                     </button>
                     
                     <button 
@@ -167,7 +173,10 @@ const Unauthorized: React.FC = () => {
                             cursor: 'pointer',
                             fontSize: '1rem',
                             fontWeight: '500',
-                            transition: 'all 0.2s ease'
+                            transition: 'all 0.2s ease',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
                         }}
                         onMouseOver={(e) => {
                             e.currentTarget.style.backgroundColor = '#c82333';
@@ -178,7 +187,7 @@ const Unauthorized: React.FC = () => {
                             e.currentTarget.style.transform = 'translateY(0)';
                         }}
                     >
-                        🚪 Đăng xuất
+                        <LogOut size={18} /> Đăng xuất
                     </button>
                 </div>
 
@@ -191,7 +200,9 @@ const Unauthorized: React.FC = () => {
                     color: '#666'
                 }}>
                     <p style={{ margin: 0 }}>
-                        💡 <strong>Gợi ý:</strong> Liên hệ với quản trị viên để được cấp quyền truy cập hoặc đăng nhập bằng tài khoản có quyền phù hợp.
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <Lightbulb size={16} /> <strong>Gợi ý:</strong>
+                        </span> Liên hệ với quản trị viên để được cấp quyền truy cập hoặc đăng nhập bằng tài khoản có quyền phù hợp.
                     </p>
                 </div>
             </div>

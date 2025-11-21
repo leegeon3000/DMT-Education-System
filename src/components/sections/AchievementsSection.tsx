@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trophy, GraduationCap, Star, Users, Medal, CheckCircle } from 'lucide-react';
 import { COLORS } from '../../constants';
 
 const AchievementsSection: React.FC = () => {
@@ -8,7 +9,7 @@ const AchievementsSection: React.FC = () => {
       style={{
         padding: '80px 20px',
         textAlign: 'center',
-        background: `${COLORS.backgrounds.section}, ${COLORS.backgrounds.pattern}`,
+        background: '#ffffff',
         position: 'relative',
         overflow: 'hidden'
       }}
@@ -44,9 +45,13 @@ const AchievementsSection: React.FC = () => {
           color: COLORS.neutral.gray800,
           marginBottom: '1rem',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '12px'
         }}>
-          🏆 Thành Tích & Chứng Nhận
+          <Trophy size={32} /> Thành Tích & Chứng Nhận
         </h2>
         
         <p style={{
@@ -94,7 +99,7 @@ const AchievementsSection: React.FC = () => {
               marginBottom: '20px',
               position: 'relative',
               zIndex: 2
-            }}>🎓</div>
+            }}><GraduationCap size={48} /></div>
             
             <h3 style={{
               fontSize: '1.4rem',
@@ -116,9 +121,13 @@ const AchievementsSection: React.FC = () => {
             <div style={{
               color: COLORS.primary.main,
               fontWeight: 'bold',
-              fontSize: '1.1rem'
+              fontSize: '1.1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
             }}>
-              ✓ Chứng nhận chính thức
+              <CheckCircle size={18} /> Chứng nhận chính thức
             </div>
           </div>
 
@@ -150,7 +159,7 @@ const AchievementsSection: React.FC = () => {
               marginBottom: '20px',
               position: 'relative',
               zIndex: 2
-            }}>🥇</div>
+            }}><Medal size={48} className="text-yellow-500" /></div>
             
             <h3 style={{
               fontSize: '1.4rem',
@@ -174,7 +183,9 @@ const AchievementsSection: React.FC = () => {
               fontWeight: 'bold',
               fontSize: '1.1rem'
             }}>
-              ⭐ Đánh giá 5 sao
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                Chất lượng giảng dạy
+              </span>
             </div>
           </div>
 
@@ -206,7 +217,7 @@ const AchievementsSection: React.FC = () => {
               marginBottom: '20px',
               position: 'relative',
               zIndex: 2
-            }}>👨‍🎓</div>
+            }}><Users size={48} /></div>
             
             <h3 style={{
               fontSize: '1.4rem',
@@ -230,7 +241,7 @@ const AchievementsSection: React.FC = () => {
               fontWeight: 'bold',
               fontSize: '1.1rem'
             }}>
-              📈 Tỷ lệ thành công cao
+              Tỷ lệ thành công cao
             </div>
           </div>
         </div>

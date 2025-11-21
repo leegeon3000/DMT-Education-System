@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../store/slices/userSlice';
+import { User, GraduationCap, Users as UsersIcon, UserCog, CheckCircle } from 'lucide-react';
 
 const LoginSuccessNotification: React.FC = () => {
     const [show, setShow] = useState(false);
@@ -25,15 +26,15 @@ const LoginSuccessNotification: React.FC = () => {
     const getRoleDisplay = (role: string | null) => {
         switch (role) {
             case 'admin':
-                return { name: 'Quản trị viên', icon: '👨‍💼', color: '#dc3545' };
+                return { name: 'Quản trị viên', icon: <UserCog size={20} />, color: '#dc3545' };
             case 'teacher':
-                return { name: 'Giáo viên', icon: '👨‍🏫', color: '#28a745' };
+                return { name: 'Giáo viên', icon: <GraduationCap size={20} />, color: '#28a745' };
             case 'student':
-                return { name: 'Học sinh', icon: '👨‍🎓', color: '#007bff' };
+                return { name: 'Học sinh', icon: <UsersIcon size={20} />, color: '#007bff' };
             case 'staff':
-                return { name: 'Nhân viên', icon: '👨‍💻', color: '#6f42c1' };
+                return { name: 'Nhân viên', icon: <User size={20} />, color: '#6f42c1' };
             default:
-                return { name: 'Người dùng', icon: '👤', color: '#6c757d' };
+                return { name: 'Người dùng', icon: <User size={20} />, color: '#6c757d' };
         }
     };
 
@@ -78,7 +79,7 @@ const LoginSuccessNotification: React.FC = () => {
                         justifyContent: 'center',
                         flexShrink: 0
                     }}>
-                        <span style={{ fontSize: '1.5rem' }}>✅</span>
+                        <CheckCircle size={24} />
                     </div>
                     
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -87,7 +88,7 @@ const LoginSuccessNotification: React.FC = () => {
                         </div>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                            <span style={{ fontSize: '1.2rem' }}>{roleInfo.icon}</span>
+                            <span>{roleInfo.icon}</span>
                             <span style={{ 
                                 fontSize: '0.9rem', 
                                 overflow: 'hidden',

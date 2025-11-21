@@ -24,3 +24,16 @@ coverage
 *.tmp
 *.temp
 *.cache
+.env
+.env.localdmt-education-*.json
+.vercel
+client_secret.json
+client_secret_*.json
+credentials.json
+google-credentials.json
+secrets.json
+node_modules/
+Backend/node_modules/
+Backend/.env
+Backend/.env.local
+Backend/.env.development.local

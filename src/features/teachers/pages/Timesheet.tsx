@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SEOHead } from '../../../components/common';
 import TeacherLayout from '../../../components/layout/TeacherLayout';
+import { Clock, Plus, Calendar, CheckCircle, AlertCircle, Home, Timer, ClipboardList } from 'lucide-react';
 
 interface TimesheetEntry {
   id: string;
@@ -149,8 +150,7 @@ const Timesheet: React.FC = () => {
         keywords="chấm công, nghỉ phép, thời gian làm việc"
       />
       
-      <TeacherLayout>
-        <div style={{ padding: '24px' }}>
+      <div style={{ padding: '24px' }}>
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <div>
@@ -158,9 +158,12 @@ const Timesheet: React.FC = () => {
                 fontSize: '24px',
                 fontWeight: 'bold',
                 color: '#1e293b',
-                marginBottom: '4px'
+                marginBottom: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
               }}>
-                ⏰ Chấm công & Nghỉ phép
+                <Clock size={24} /> Chấm công & Nghỉ phép
               </h1>
               <p style={{ color: '#64748b', fontSize: '14px' }}>
                 Quản lý thời gian làm việc và đăng ký nghỉ phép
@@ -177,10 +180,13 @@ const Timesheet: React.FC = () => {
                 border: 'none',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
               }}
             >
-              ➕ Đăng ký nghỉ phép
+              <Plus size={16} /> Đăng ký nghỉ phép
             </button>
           </div>
 
@@ -207,7 +213,7 @@ const Timesheet: React.FC = () => {
                     {totalDays}
                   </p>
                 </div>
-                <div style={{ fontSize: '24px' }}>📅</div>
+                <div style={{ color: '#3b82f6' }}><Calendar size={24} /></div>
               </div>
             </div>
 
@@ -227,7 +233,7 @@ const Timesheet: React.FC = () => {
                     {presentDays}
                   </p>
                 </div>
-                <div style={{ fontSize: '24px' }}>✅</div>
+                <div style={{ color: '#22c55e' }}><CheckCircle size={24} /></div>
               </div>
             </div>
 
@@ -247,7 +253,7 @@ const Timesheet: React.FC = () => {
                     {lateDays}
                   </p>
                 </div>
-                <div style={{ fontSize: '24px' }}>⏰</div>
+                <div style={{ color: '#f59e0b' }}><AlertCircle size={24} /></div>
               </div>
             </div>
 
@@ -267,7 +273,7 @@ const Timesheet: React.FC = () => {
                     {leaveDays}
                   </p>
                 </div>
-                <div style={{ fontSize: '24px' }}>🏠</div>
+                <div style={{ color: '#3b82f6' }}><Home size={24} /></div>
               </div>
             </div>
 
@@ -287,7 +293,7 @@ const Timesheet: React.FC = () => {
                     {totalHours}h
                   </p>
                 </div>
-                <div style={{ fontSize: '24px' }}>⏱️</div>
+                <div style={{ color: '#1e293b' }}><Timer size={24} /></div>
               </div>
             </div>
           </div>
@@ -410,7 +416,7 @@ const Timesheet: React.FC = () => {
                     padding: '40px 20px',
                     color: '#64748b'
                   }}>
-                    <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
+                    <div style={{ color: '#64748b', marginBottom: '12px' }}><ClipboardList size={32} /></div>
                     <p>Chưa có đơn nghỉ phép nào</p>
                   </div>
                 ) : (
@@ -439,11 +445,11 @@ const Timesheet: React.FC = () => {
                         </div>
                         
                         <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                          <p style={{ marginBottom: '4px' }}>
-                            📅 {formatDate(request.startDate)} → {formatDate(request.endDate)}
+                          <p style={{ marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Calendar size={12} /> {formatDate(request.startDate)} → {formatDate(request.endDate)}
                           </p>
-                          <p>
-                            🕒 Gửi lúc: {formatDateTime(request.submittedAt)}
+                          <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Clock size={12} /> Gửi lúc: {formatDateTime(request.submittedAt)}
                           </p>
                         </div>
                         
@@ -598,7 +604,6 @@ const Timesheet: React.FC = () => {
             </div>
           )}
         </div>
-      </TeacherLayout>
     </>
   );
 };

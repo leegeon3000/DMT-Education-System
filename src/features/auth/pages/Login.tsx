@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
   COLORS,
   TYPOGRAPHY,
@@ -10,6 +11,9 @@ import {
   EFFECTS,
 } from '../../../constants';
 import authService from '../../../services/auth';
+import { login as loginAction } from '../../../store/slices/userSlice';
+import { Role } from '../../../types';
+import { AlertTriangle, CheckCircle, ArrowLeft } from 'lucide-react';
 
 // Types
 interface LoginResponse {
@@ -166,50 +170,106 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const loginStartTime = performance.now();
+    console.log('🔐 Login attempt:', { email, password: '***' });
     setIsLoading(true);
     setError(null);
 
     try {
+      console.log('📡 [1/4] Calling authService.login...');
+      const apiStartTime = performance.now();
       const data = await authService.login({ email, password });
+      const apiEndTime = performance.now();
+      console.log(`✅ [2/4] API responded in ${(apiEndTime - apiStartTime).toFixed(0)}ms`, { 
+        token: data.token ? 'exists' : 'missing', 
+        user: data.user?.full_name 
+      });
 
       // Save token to localStorage
+      const storageStartTime = performance.now();
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
       }
+      console.log(`✅ [3/4] LocalStorage saved in ${(performance.now() - storageStartTime).toFixed(0)}ms`);
+
+      // Map role_id to Role enum
+      let userRole: Role;
+      switch (data.user.role_id) {
+        case 1:
+          userRole = Role.ADMIN;
+          break;
+        case 2:
+          userRole = Role.STAFF;
+          break;
+        case 3:
+          userRole = Role.TEACHER;
+          break;
+        case 4:
+          userRole = Role.STUDENT;
+          break;
+        default:
+          userRole = Role.STUDENT;
+      }
+
+      // Dispatch login action to Redux store
+      const reduxStartTime = performance.now();
+      dispatch(loginAction({
+        id: data.user.id.toString(),
+        name: data.user.full_name,
+        email: data.user.email,
+        role: userRole,
+        status: 'active',
+        lastLogin: new Date().toISOString(),
+        student_id: data.user.student_id,
+        student_code: data.user.student_code,
+        teacher_id: data.user.teacher_id,
+        teacher_code: data.user.teacher_code,
+      }));
+      console.log(`✅ [4/4] Redux updated in ${(performance.now() - reduxStartTime).toFixed(0)}ms`);
+
+      const totalTime = performance.now() - loginStartTime;
+      console.log(`🎉 Total login time: ${totalTime.toFixed(0)}ms`);
 
       setSuccess(true);
 
-      // Redirect based on user role
-      setTimeout(() => {
-        switch (data.user.role_id) {
-          case 1: // Admin
-            navigate('/admin/dashboard');
-            break;
-          case 2: // Teacher
-            navigate('/teachers/dashboard');
-            break;
-          case 3: // Student
-            navigate('/students/dashboard');
-            break;
-          case 4: // Parent
-            navigate('/students/dashboard'); // Parents see student dashboard
-            break;
-          default:
-            navigate('/dashboard');
-        }
-      }, 1500);
+      // Redirect immediately for faster UX
+      console.log('🎯 Navigating to dashboard...');
+      switch (data.user.role_id) {
+        case 1: // Admin
+          navigate('/admin/dashboard');
+          break;
+        case 2: // Staff
+          navigate('/staff/dashboard');
+          break;
+        case 3: // Teacher
+          navigate('/teacher/dashboard');
+          break;
+        case 4: // Student
+          navigate('/students/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
     } catch (err: any) {
-      console.error('Login error:', err);
+      const errorTime = performance.now() - loginStartTime;
+      console.error(`❌ Login failed after ${errorTime.toFixed(0)}ms`, err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       setError(
         err.response?.data?.error ||
           err.message ||
           'Đăng nhập thất bại. Vui lòng thử lại.'
       );
     } finally {
+      console.log('🏁 Login process completed, isLoading:', false);
       setIsLoading(false);
     }
   };
@@ -223,7 +283,7 @@ const Login: React.FC = () => {
     <div
       style={{
         minHeight: '100vh',
-        background: `linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('/DMT Education_Logo/banner.jpg')`,
+        background: `linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url('/banner.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -345,6 +405,49 @@ const Login: React.FC = () => {
         }}
       />
 
+      {/* Back to Home Button */}
+      <motion.button
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => navigate('/')}
+        style={{
+          position: 'absolute',
+          top: SPACING['2xl'],
+          left: SPACING['2xl'],
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          gap: SPACING.sm,
+          padding: `${SPACING.sm} ${SPACING.md}`,
+          background: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          border: `1px solid ${COLORS.neutral.gray200}`,
+          borderRadius: BORDERS.radius.lg,
+          color: COLORS.neutral.gray700,
+          fontSize: TYPOGRAPHY.fontSize.sm,
+          fontWeight: TYPOGRAPHY.fontWeight.medium,
+          cursor: 'pointer',
+          boxShadow: SHADOWS.sm,
+          transition: EFFECTS.transition.normal,
+        }}
+        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+          e.currentTarget.style.borderColor = COLORS.primary.main;
+          e.currentTarget.style.color = COLORS.primary.main;
+        }}
+        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.9)';
+          e.currentTarget.style.borderColor = COLORS.neutral.gray200;
+          e.currentTarget.style.color = COLORS.neutral.gray700;
+        }}
+      >
+        <ArrowLeft size={18} />
+        Về trang chủ
+      </motion.button>
+
       <div
         style={{
           width: '100%',
@@ -389,7 +492,7 @@ const Login: React.FC = () => {
                 width: '48px',
                 height: '48px',
                 backgroundImage:
-                  'url("/DMT Education_Logo/LOGO DMT FINAL-06.png")',
+                  'url("/logo-dmt-main.png")',
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
@@ -529,13 +632,13 @@ const Login: React.FC = () => {
         >
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(25px) saturate(180%)',
+              background: 'rgba(255, 255, 255, 0.75)',
+              backdropFilter: 'blur(40px) saturate(180%)',
               borderRadius: BORDERS.radius['3xl'],
               boxShadow:
-                '0 25px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5)',
+                '0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.3)',
               padding: SPACING['4xl'],
-              border: `1px solid rgba(255, 255, 255, 0.6)`,
+              border: `1px solid rgba(255, 255, 255, 0.4)`,
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -576,7 +679,7 @@ const Login: React.FC = () => {
                     width: '40px',
                     height: '40px',
                     backgroundImage:
-                      'url("/DMT Education_Logo/LOGO DMT FINAL-06.png")',
+                      'url("/logo-dmt-main.png")',
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
@@ -620,20 +723,20 @@ const Login: React.FC = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   style={{
-                    background: 'linear-gradient(135deg, #fee2e2, #fecaca)',
+                    background: 'linear-gradient(135deg, #e43535ff, #ffffffff)',
                     color: '#dc2626',
                     padding: SPACING.md,
                     borderRadius: BORDERS.radius.md,
                     fontSize: TYPOGRAPHY.fontSize.sm,
                     textAlign: 'center',
-                    border: `1px solid #fca5a5`,
+                    border: `1px solid #ff5555ff`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: SPACING.sm,
                   }}
                 >
-                  <span>⚠️</span>
+                  <AlertTriangle size={20} />
                   {error}
                 </motion.div>
               )}
@@ -641,8 +744,9 @@ const Login: React.FC = () => {
               {/* Success Message */}
               {success && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.15 }}
                   style={{
                     background: 'linear-gradient(135deg, #d1fae5, #a7f3d0)',
                     color: '#059669',
@@ -657,8 +761,8 @@ const Login: React.FC = () => {
                     gap: SPACING.sm,
                   }}
                 >
-                  <span>✅</span>
-                  Đăng nhập thành công! Đang chuyển hướng...
+                  <CheckCircle size={20} />
+                  Đăng nhập thành công!
                 </motion.div>
               )}
               {/* Email Input */}
@@ -872,26 +976,26 @@ const Login: React.FC = () => {
               {/* Sign In Button */}
               <motion.button
                 type="submit"
-                disabled={isLoading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                disabled={isLoading || success}
+                whileHover={!isLoading && !success ? { scale: 1.02 } : {}}
+                whileTap={!isLoading && !success ? { scale: 0.98 } : {}}
                 style={{
                   width: '100%',
-                  background: COLORS.primary.gradient,
+                  background: success ? 'linear-gradient(135deg, #10b981, #059669)' : COLORS.primary.gradient,
                   color: COLORS.neutral.white,
                   padding: `${SPACING.md} ${SPACING.lg}`,
                   borderRadius: BORDERS.radius.lg,
                   border: 'none',
                   fontSize: TYPOGRAPHY.fontSize.lg,
                   fontWeight: TYPOGRAPHY.fontWeight.semibold,
-                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  cursor: isLoading || success ? 'not-allowed' : 'pointer',
                   boxShadow: SHADOWS.primary,
                   transition: EFFECTS.transition.normal,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: SPACING.sm,
-                  opacity: isLoading ? 0.5 : 1,
+                  opacity: isLoading || success ? 0.7 : 1,
                 }}
               >
                 {isLoading ? (
@@ -903,10 +1007,14 @@ const Login: React.FC = () => {
                         border: `2px solid ${COLORS.neutral.white}`,
                         borderTop: '2px solid transparent',
                         borderRadius: '50%',
-                        animation: 'spin 1s linear infinite',
+                        animation: 'spin 0.8s linear infinite',
                       }}
                     ></div>
-                    Đang đăng nhập...
+                    Đang xác thực...
+                  </>
+                ) : success ? (
+                  <>
+                    ✓ Thành công
                   </>
                 ) : (
                   'Đăng nhập'
@@ -943,26 +1051,26 @@ const Login: React.FC = () => {
                   {
                     role: 'Admin',
                     email: 'admin@dmt.edu.vn',
-                    password: 'password',
+                    password: 'Admin@123',
                     color: COLORS.primary.main,
                   },
                   {
                     role: 'Giáo viên',
-                    email: 'teacher@dmt.edu.vn',
-                    password: 'teacher123',
+                    email: 'teacher.math@dmt.edu.vn',
+                    password: 'Teacher@123',
                     color: COLORS.secondary.blue,
                   },
                   {
                     role: 'Học viên',
-                    email: 'student@dmt.edu.vn',
-                    password: 'student123',
+                    email: 'student001@gmail.com',
+                    password: 'Student@123',
                     color: COLORS.secondary.green,
                   },
                   {
-                    role: 'Phụ huynh',
-                    email: 'parent@dmt.edu.vn',
-                    password: 'parent123',
-                    color: COLORS.secondary.purple,
+                    role: 'Nhân viên',
+                    email: 'staff1@dmt.edu.vn',
+                    password: 'Staff@123',
+                    color: COLORS.primary.main,
                   },
                 ].map((demo, index) => (
                   <motion.button
@@ -979,13 +1087,13 @@ const Login: React.FC = () => {
                       cursor: 'pointer',
                       transition: EFFECTS.transition.normal,
                     }}
-                    onMouseEnter={e => {
+                    onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
                       (e.target as HTMLElement).style.borderColor = demo.color;
                       (
                         e.target as HTMLElement
                       ).style.background = `${demo.color}08`;
                     }}
-                    onMouseLeave={e => {
+                    onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
                       (e.target as HTMLElement).style.borderColor =
                         COLORS.neutral.gray200;
                       (e.target as HTMLElement).style.background =

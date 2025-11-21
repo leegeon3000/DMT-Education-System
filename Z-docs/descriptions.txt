@@ -1,0 +1,43 @@
+MÔ TẢ TRANG WEB
+
+I. Giao diện hệ thống
+    1. Phân quyền người dùng 
+        - admin 
+        - giảng viên/trợ giảng
+        - học sinh/phụ huynh
+        - nhân viên
+
+    2. phân loại cụ thể các giao diện tương ứng với các role người dùng 
+        - giao diện chính quảng bá
+        - giao diện quản lý của admin
+        - giao diện cho giảng viên/trợ giảng
+        - giao diện cho học sinh/phụ huynh
+        - giao diện cho nhân viên
+    3. Trang quảng bá
+        - Trang chủ, lịch học, sự kiện, thông báo, khóa học
+    4. Trang admin
+        - Thực hiện quản lý các tài khoản user
+        - Quản lý các khóa học
+        - Đăng tin tức, thông báo, sự kiện chung đến trang chủ
+        - Quản lý database 
+        - Quảng lý các video, khóa học, tài liệu học tập
+        - Thống kê các thông số về điểm của học sinh , doanh thu của trung tâm
+    5. Giảng viên/ trợ giảng
+        - Đăng bài tập, thông báo đến học sinh
+        - Xử lý điểm số, kết quả học tập của học sinh
+        - Điểm danh và chấm công
+    6. Học sinh/phụ huynh
+        - Xem lịch học, thông báo, sự kiện
+        - Xem điểm số, kết quả học tập
+        - Nộp bài tập, làm bài kiểm tra
+        - Xem video bài giảng trong các khóa học đã đăng ký
+    7. Nhân viên
+        - Xem các thông tin liên quan đến học sinh, giảng viên, trợ giảng
+        - Xem thông tin lịch học, sự kiện, tạo nhắc nhở đến giáo viên, học sinh
+
+II. Database
+    - Tạo các bảng dữ liệu liên quan đến người dùng, khóa học, lịch học, điểm số, bài tập, thông báo, sự kiện
+    - Thực hiện các truy vấn cơ bản để lấy thông tin từ database
+    - Cập nhật thông tin người dùng, khóa học, lịch học, điểm số
+    - Lưu trữ các video, khóa học, tài liệu học tập
+    

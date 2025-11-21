@@ -1,4 +1,5 @@
 import React from 'react';
+import { Calendar, RefreshCw, User } from 'lucide-react';
 
 interface TicketItemProps {
   ticket: {
@@ -136,11 +137,11 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, onClick }) => {
         borderTop: '1px solid #F3F4F6'
       }}>
         <div>
-          <div style={{ marginBottom: '0.25rem' }}>
-            📅 Tạo: {new Date(ticket.createdAt).toLocaleString('vi-VN')}
+          <div style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Calendar size={14} /> Tạo: {new Date(ticket.createdAt).toLocaleString('vi-VN')}
           </div>
-          <div>
-            🔄 Cập nhật: {new Date(ticket.updatedAt).toLocaleString('vi-VN')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <RefreshCw size={14} /> Cập nhật: {new Date(ticket.updatedAt).toLocaleString('vi-VN')}
           </div>
         </div>
         
@@ -150,9 +151,12 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, onClick }) => {
               padding: '0.25rem 0.5rem',
               backgroundColor: '#F3F4F6',
               borderRadius: '4px',
-              fontSize: '0.75rem'
+              fontSize: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
             }}>
-              👤 {ticket.assignedTo}
+              <User size={14} /> {ticket.assignedTo}
             </div>
           </div>
         )}

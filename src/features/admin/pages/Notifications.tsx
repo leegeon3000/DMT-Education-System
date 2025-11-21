@@ -56,7 +56,7 @@ const getTypeColor = (type: string) => {
   switch (type) {
     case 'email': return 'bg-blue-100 text-blue-700';
     case 'sms': return 'bg-green-100 text-green-700';
-    case 'push': return 'bg-purple-100 text-purple-700';
+    case 'push': return 'bg-red-100 text-red-700';
     default: return 'bg-gray-100 text-gray-700';
   }
 };
@@ -691,13 +691,13 @@ const Notifications: React.FC = () => {
           </Card>
           <Card>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{stats.clickRate}%</div>
+              <div className="text-2xl font-bold text-red-600">{stats.clickRate}%</div>
               <div className="text-sm text-gray-600">Tỷ lệ click</div>
             </div>
           </Card>
           <Card>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{stats.failureRate}%</div>
+              <div className="text-2xl font-bold text-red-700">{stats.failureRate}%</div>
               <div className="text-sm text-gray-600">Tỷ lệ thất bại</div>
             </div>
           </Card>

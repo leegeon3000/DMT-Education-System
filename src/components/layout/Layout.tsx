@@ -1,5 +1,6 @@
 import React from 'react';
-import { HeaderComponent, Footer } from '../sections';
+import ModernHeader from './ModernHeader';
+import ModernFooter from '../home/ModernFooter';
 import { ErrorBoundary } from '../common';
 
 interface LayoutProps {
@@ -9,12 +10,12 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <ErrorBoundary>
-      <div style={{ minHeight: '100vh' }}>
-        <HeaderComponent />
-        <main>
+      <div className="min-h-screen flex flex-col">
+        <ModernHeader />
+        <main className="flex-grow pt-16 lg:pt-20">
           {children}
         </main>
-        <Footer />
+        <ModernFooter />
       </div>
     </ErrorBoundary>
   );

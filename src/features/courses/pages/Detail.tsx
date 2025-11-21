@@ -50,9 +50,6 @@ const CourseDetail = () => {
             <h2 style={{ marginTop: '1.5rem', fontSize: '1.25rem' }}>Giảng viên: {course.instructor}</h2>
             <h3 style={{ marginTop: '1rem' }}>Thời gian: {course.duration}</h3>
             <h3 style={{ marginTop: '1rem' }}>Giá: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(course.price)}</h3>
-            {course.rating && (
-                <h3 style={{ marginTop: '1rem' }}>Đánh giá: ⭐ {course.rating}/5</h3>
-            )}
             {course.studentsCount && (
                 <h3 style={{ marginTop: '1rem' }}>Học viên: {course.studentsCount} người</h3>
             )}

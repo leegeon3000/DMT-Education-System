@@ -1,62 +1,175 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icons } from '../common/Icons';
 import { useOptimizedAnimation } from '../../hooks/useOptimizedAnimation';
+import { publicTeachersApi, type PublicTeacher } from '../../services/publicApi';
+import { Loader } from 'lucide-react';
 
-const TeacherReviewsSection: React.FC = () => {
+interface TeacherReviewsSectionProps {
+  onViewAll?: () => void;
+}
+
+const TeacherReviewsSection: React.FC<TeacherReviewsSectionProps> = ({ onViewAll }) => {
+  const navigate = useNavigate();
   const { ref: reviewsRef, inView: reviewsInView } = useOptimizedAnimation();
+  const [teachers, setTeachers] = useState<PublicTeacher[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Dữ liệu giảng viên DMT 
-  const teacherReviews = [
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await publicTeachersApi.getAll({ 
+          is_active: true,
+          page: 1,
+          limit: 8
+        });
+        
+        if (response.success && response.data && response.data.length > 0) {
+          setTeachers(response.data);
+        } else {
+          // Fallback to mock data if no teachers returned
+          console.warn('No teachers returned from API, using fallback data');
+          setTeachers(getMockTeachers());
+        }
+      } catch (err: any) {
+        console.error('Error fetching teachers:', err);
+        // Check if it's a 404 or authentication error
+        if (err.response?.status === 404) {
+          console.warn('Teachers API endpoint not found (404), using mock data');
+        } else if (err.response?.status === 401 || err.response?.status === 403) {
+          console.warn('Authentication required for teachers API, using mock data');
+        } else {
+          console.warn('API error:', err.message);
+        }
+        // Always use mock data on error for public page
+        setTeachers(getMockTeachers());
+        setError(null); // Don't show error to user, just use mock data
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeachers();
+  }, []);
+
+  // Mock data fallback
+  const getMockTeachers = (): PublicTeacher[] => [
     {
       id: 1,
-      name: 'Trần Giang Thanh',
-      position: 'Giáo dục không phải là việc đổ đầy một cái thùng, mà là thắp sáng ngọn lửa tri thức.',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face',
-      score: 'Giáo viên Toán',
-      scoreType: 'Chuyên môn',
-      bgColor: '#E5E7EB'
+      teacher_code: 'GV001',
+      full_name: 'Trần Giang Thanh',
+      phone: '0901234567',
+      address: 'TP.HCM',
+      birth_date: '1985-01-15',
+      degree: 'Thạc sĩ Toán học',
+      specialization: 'Toán học',
+      years_of_experience: 10,
+      bio: 'Giáo viên Toán học với 10 năm kinh nghiệm',
+      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face',
+      is_active: true,
+      created_at: new Date().toISOString()
     },
     {
       id: 2,
-      name: 'Hà Đăng Như Quỳnh',
-      position: 'Thành công đến từ sự kiên trì và đam mê không ngừng nghỉ.',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
-      score: 'Giáo viên Văn',
-      scoreType: 'Chuyên môn',
-      bgColor: '#FDE2E7'
+      teacher_code: 'GV002',
+      full_name: 'Hà Đăng Như Quỳnh',
+      phone: '0902234567',
+      address: 'TP.HCM',
+      birth_date: '1987-03-20',
+      degree: 'Thạc sĩ Ngữ văn',
+      specialization: 'Ngữ văn',
+      years_of_experience: 8,
+      bio: 'Giáo viên Ngữ văn với 8 năm kinh nghiệm',
+      avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face',
+      is_active: true,
+      created_at: new Date().toISOString()
     },
     {
       id: 3,
-      name: 'Trần Anh Khoa',
-      position: 'Học tập là hành trình không có điểm kết thúc, chỉ có những cột mốc.',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face',
-      score: 'Giáo viên Anh',
-      scoreType: 'Chuyên môn',
-      bgColor: '#FECACA'
+      teacher_code: 'GV003',
+      full_name: 'Trần Anh Khoa',
+      phone: '0903234567',
+      address: 'TP.HCM',
+      birth_date: '1983-07-10',
+      degree: 'Cử nhân Tiếng Anh',
+      specialization: 'Tiếng Anh',
+      years_of_experience: 12,
+      bio: 'Giáo viên Tiếng Anh với 12 năm kinh nghiệm',
+      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face',
+      is_active: true,
+      created_at: new Date().toISOString()
     },
     {
       id: 4,
-      name: 'Nguyễn Bá Thọ',
-      position: 'Giáo viên giỏi là người biết cách thắp lên ngọn lửa học tập trong mỗi học sinh.',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face',
-      score: 'Giáo viên Lý',
-      scoreType: 'Chuyên môn',
-      bgColor: '#E5E7EB'
+      teacher_code: 'GV004',
+      full_name: 'Nguyễn Bá Thọ',
+      phone: '0904234567',
+      address: 'TP.HCM',
+      birth_date: '1980-05-25',
+      degree: 'Tiến sĩ Vật lý',
+      specialization: 'Vật lý',
+      years_of_experience: 15,
+      bio: 'Giáo viên Vật lý với 15 năm kinh nghiệm',
+      avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face',
+      is_active: true,
+      created_at: new Date().toISOString()
     },
     {
       id: 5,
-      name: 'Từ Kim Loan',
-      position: 'Mỗi học sinh đều có tiềm năng vô hạn, nhiệm vụ của tôi là giúp họ khám phá ra điều đó.',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face',
-      score: 'Giáo viên Hóa',
-      scoreType: 'Chuyên môn',
-      bgColor: '#F3E8FF'
+      teacher_code: 'GV005',
+      full_name: 'Từ Kim Loan',
+      phone: '0905234567',
+      address: 'TP.HCM',
+      birth_date: '1986-11-30',
+      degree: 'Thạc sĩ Hóa học',
+      specialization: 'Hóa học',
+      years_of_experience: 9,
+      bio: 'Giáo viên Hóa học với 9 năm kinh nghiệm',
+      avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face',
+      is_active: true,
+      created_at: new Date().toISOString()
     }
   ];
+
+  // Don't show loading state, just show mock data immediately if needed
+  // This provides better UX for public pages
+  
+  // If no teachers loaded yet, show mock data
+  const displayTeachers = teachers.length > 0 ? teachers : getMockTeachers();
+
+  // Dữ liệu giảng viên DMT 
+  const teacherReviews = displayTeachers.map((teacher, index) => {
+    const bgColors = ['#E5E7EB', '#FDE2E7', '#fcfcfcff', '#E5E7EB', '#FDE2E7', '#fcfcfcff', '#E5E7EB', '#FDE2E7'];
+    const quotes = [
+      'Giáo dục không phải là việc đổ đầy một cái thùng, mà là thắp sáng ngọn lửa tri thức.',
+      'Thành công đến từ sự kiên trì và đam mê không ngừng nghỉ.',
+      'Học tập là hành trình không có điểm kết thúc, chỉ có những cột mốc.',
+      'Giáo viên giỏi là người biết cách thắp lên ngọn lửa học tập trong mỗi học sinh.',
+      'Mỗi học sinh đều có tiềm năng vô hạn, nhiệm vụ của tôi là giúp họ khám phá ra điều đó.',
+      'Tri thức là chìa khóa mở cửa tương lai.',
+      'Sự kiên nhẫn và tận tâm là nền tảng của giảng dạy hiệu quả.',
+      'Mỗi học sinh là một ngôi sao sáng, nhiệm vụ của tôi là giúp họ tỏa sáng.'
+    ];
+
+    return {
+      id: teacher.id,
+      name: teacher.full_name || 'Giáo viên',
+      position: quotes[index % quotes.length],
+      avatar: teacher.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.full_name || 'Teacher')}&size=300&background=random`,
+      score: `Giáo viên ${teacher.specialization || 'DMT'}`,
+      scoreType: `${teacher.years_of_experience || 0}+ năm kinh nghiệm`,
+      bgColor: bgColors[index % bgColors.length]
+    };
+  });
 
   return (
     <section 
       id="teachers"
+      ref={reviewsRef}
       style={{
         padding: '80px 0',
         background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
@@ -214,14 +327,18 @@ const TeacherReviewsSection: React.FC = () => {
                 }}
               >
                 {/* Teacher Image */}
-                <div style={{
-                  width: '240px',
-                  height: '280px',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  marginBottom: '20px',
-                  position: 'relative'
-                }}>
+                <div 
+                  style={{
+                    width: '240px',
+                    height: '280px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    marginBottom: '20px',
+                    position: 'relative',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => navigate(`/teachers/${teachers[index]?.id}`)}
+                >
                   <img 
                     src={teacher.avatar}
                     alt={teacher.name}
@@ -339,26 +456,28 @@ const TeacherReviewsSection: React.FC = () => {
         {/* View All Teachers Button */}
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <div className={`transform transition-all duration-1000 delay-500 ${reviewsInView ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <button style={{
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              color: 'white',
-              padding: '12px 30px',
-              borderRadius: '25px',
-              border: 'none',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              boxShadow: '0 8px 25px rgba(245, 158, 11, 0.3)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(245, 158, 11, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 25px rgba(245, 158, 11, 0.3)';
-            }}
+            <button 
+              onClick={onViewAll || (() => navigate('/teachers/list'))}
+              style={{
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                color: 'white',
+                padding: '12px 30px',
+                borderRadius: '25px',
+                border: 'none',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 8px 25px rgba(245, 158, 11, 0.3)',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 12px 30px rgba(245, 158, 11, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(245, 158, 11, 0.3)';
+              }}
             >
               Xem tất cả giáo viên
             </button>

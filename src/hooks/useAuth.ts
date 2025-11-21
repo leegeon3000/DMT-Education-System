@@ -11,6 +11,14 @@ const useAuth = () => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
+                // Only check auth if token exists
+                const token = authService.getToken();
+                if (!token) {
+                    setIsAuthenticated(false);
+                    setLoading(false);
+                    return;
+                }
+                
                 const user = await authService.getCurrentUser();
                 if (user) {
                     dispatch(login(user));

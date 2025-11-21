@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CheckCircle, Lightbulb, XCircle, MessageCircle } from 'lucide-react';
 import { Icons } from '../common/Icons';
 import { useOptimizedAnimation } from '../../hooks/useOptimizedAnimation';
 import { BackgroundSection, SECTION_BACKGROUNDS } from '../common';
@@ -389,9 +390,13 @@ const ContactSection: React.FC = () => {
                   border: '1px solid #10b981',
                   color: '#065f46',
                   fontSize: '14px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}>
-                  ✅ Cảm ơn bạn! Chúng tôi sẽ liên hệ với bạn trong 24h.
+                  <CheckCircle size={18} /> Cảm ơn bạn! Chúng tôi sẽ liên hệ với bạn trong 24h.
                 </div>
               )}
               
@@ -403,9 +408,13 @@ const ContactSection: React.FC = () => {
                   border: '1px solid #ef4444',
                   color: '#991b1b',
                   fontSize: '14px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}>
-                  ❌ Có lỗi xảy ra. Vui lòng thử lại hoặc gọi hotline.
+                  <XCircle size={18} /> Có lỗi xảy ra. Vui lòng thử lại hoặc gọi hotline.
                 </div>
               )}
             </form>
@@ -540,7 +549,7 @@ const ContactSection: React.FC = () => {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <span style={{ fontSize: '18px' }}>💬</span>
+                  <MessageCircle size={18} />
                   Chat Zalo
                 </a>
 
@@ -640,7 +649,9 @@ const ContactSection: React.FC = () => {
                   fontSize: '13px',
                   color: '#92400e'
                 }}>
-                  💡 <strong>Lưu ý:</strong> Tư vấn online 24/7 qua Zalo/Facebook
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Lightbulb size={16} /> <strong>Lưu ý:</strong>
+                  </span> Tư vấn online 24/7 qua Zalo/Facebook
                 </div>
               </div>
             </div>

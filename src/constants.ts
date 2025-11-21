@@ -2,7 +2,7 @@
 // Task 3: Extract constants from inline styles and magic values
 
 export const COLORS = {
-  // Primary Brand Colors
+  // Primary Brand Colors - RED (GIỮ NGUYÊN)
   primary: {
     main: '#dc2626',      // Red primary
     light: '#f43f5e',     // Pink accent
@@ -10,13 +10,26 @@ export const COLORS = {
     gradient: 'linear-gradient(135deg, #dc2626, #f43f5e)'
   },
   
-  // Secondary Colors
+  // Secondary Colors - BLUE (MỚI THÊM)
   secondary: {
-    blue: '#3b82f6',
+    main: '#01AAD3',      // Blue for text/assets
+    light: '#33C3E7',     // Light blue
+    dark: '#016A8C',      // Dark blue
+    gradient: 'linear-gradient(135deg, #01AAD3, #33C3E7)',
+    
+    // Other colors (GIỮ)
     green: '#10b981',
     orange: '#f97316',
     purple: '#8b5cf6',
     yellow: '#f59e0b'
+  },
+  
+  // Neutral Colors - GRAY (MỚI THÊM)
+  neutralBg: {
+    main: '#BFBFBF',      // Gray for card backgrounds
+    light: '#F7F7F7',     // Light gray
+    lighter: '#EFEFEF',   // Lighter gray
+    dark: '#7F7F7F'       // Dark gray
   },
   
   // Neutral Colors
@@ -37,10 +50,14 @@ export const COLORS = {
   // Background Gradients
   backgrounds: {
     main: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)',
+    page: '#ffffff',      // Page background - GIỮ TRẮNG
+    hero: '#ffffff',      // Hero background - GIỮ TRẮNG
     header: 'rgba(255, 255, 255, 0.95)',
-    card: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9))',
+    card: '#F7F7F7',      // Light gray cho cards (MỚI)
+    cardSubtle: '#EFEFEF', // Lighter gray (MỚI)
+    cardDark: '#BFBFBF',  // Darker gray cho prominent cards (MỚI)
     footer: '#1f2937',
-    announcement: 'linear-gradient(90deg, #fee2e2, #fecaca)',
+    announcement: '#ffffff',
     section: '#ffffff',
     pattern: 'radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.03) 0%, transparent 50%)'
   },
@@ -163,8 +180,9 @@ export const SHADOWS = {
   '3xl': '0 20px 40px rgba(0, 0, 0, 0.1)',
   
   // Colored shadows
-  primary: '0 4px 15px rgba(220, 38, 38, 0.3)',
-  secondary: '0 8px 20px rgba(59, 130, 246, 0.3)',
+  primary: '0 4px 15px rgba(220, 38, 38, 0.3)',      // Red
+  secondary: '0 4px 15px rgba(1, 170, 211, 0.3)',    // Blue (MỚI)
+  blue: '0 8px 25px rgba(1, 170, 211, 0.4)',         // Blue hover (MỚI)
   success: '0 8px 20px rgba(34, 197, 94, 0.3)'
 };
 
@@ -226,9 +244,9 @@ export const LAYOUT = {
 export const CONTENT = {
   // Website URLs and links
   links: {
-    facebook: 'https://facebook.com/dmteducation',
-    youtube: 'https://youtube.com/@dmteducation',
-    tiktok: 'https://tiktok.com/@dmteducation'
+    facebook: 'https://facebook.com',
+    youtube: 'https://youtube.com',
+    tiktok: 'https://tiktok.com'
   },
   
   // Contact information
@@ -241,16 +259,16 @@ export const CONTENT = {
   company: {
     name: 'DMT Education',
     tagline: 'Vững nguồn tri thức, tiếp bước tương lai',
-    established: '2009',
-    experience: '15+'
+    established: '2015',
+    experience: '8+'
   },
   
   // Statistics
   stats: {
-    students: '5,000+',
+    students: '1000+',
     passRate: '98%',
     awards: '150+',
-    experience: '15+'
+    experience: '8+'
   }
 };
 

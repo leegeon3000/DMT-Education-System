@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { UserCog, GraduationCap, Users, User, Rocket, Target, CheckCircle } from 'lucide-react';
 
 interface DemoAccount {
     role: string;
@@ -18,6 +19,16 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
+    const getIcon = (iconName: string) => {
+        switch (iconName) {
+            case 'UserCog': return <UserCog size={20} />;
+            case 'GraduationCap': return <GraduationCap size={20} />;
+            case 'Users': return <Users size={20} />;
+            case 'User': return <User size={20} />;
+            default: return <User size={20} />;
+        }
+    };
+
     const demoAccounts: DemoAccount[] = [
         {
             role: 'Quản trị viên',
@@ -25,7 +36,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
             password: 'admin123',
             description: 'Quản lý toàn bộ hệ thống',
             color: 'from-red-500 to-red-600',
-            icon: '👨‍💼',
+            icon: 'UserCog',
             roleKey: 'admin'
         },
         {
@@ -34,7 +45,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
             password: 'teacher123',
             description: 'Quản lý lớp học và bài giảng',
             color: 'from-green-500 to-green-600',
-            icon: '👨‍🏫',
+            icon: 'GraduationCap',
             roleKey: 'teacher'
         },
         {
@@ -43,7 +54,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
             password: 'student123',
             description: 'Tham gia khóa học và làm bài tập',
             color: 'from-blue-500 to-blue-600',
-            icon: '👨‍🎓',
+            icon: 'Users',
             roleKey: 'student'
         },
         {
@@ -52,7 +63,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
             password: 'staff123',
             description: 'Hỗ trợ và quản lý công việc',
             color: 'from-purple-500 to-purple-600',
-            icon: '👨‍💻',
+            icon: 'User',
             roleKey: 'staff'
         }
     ];
@@ -97,7 +108,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
                     e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.2)';
                 }}
             >
-                <span>🚀</span>
+                <Rocket size={20} />
                 <span>Dùng thử tài khoản demo</span>
                 <svg 
                     style={{
@@ -135,7 +146,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
                         justifyContent: 'center',
                         gap: '0.5rem'
                     }}>
-                        <span>💡</span>
+                        <Target size={16} />
                         Chọn một tài khoản để trải nghiệm hệ thống
                     </p>
                     
@@ -191,7 +202,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
                                         fontSize: '1.2rem',
                                         flexShrink: 0
                                     }}>
-                                        {account.icon}
+                                        {getIcon(account.icon)}
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{
@@ -236,7 +247,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
                                         color: 'white',
                                         fontSize: '0.7rem'
                                     }}>
-                                        ✓
+                                        <CheckCircle size={14} />
                                     </div>
                                 )}
                             </button>
@@ -259,7 +270,7 @@ const DemoAccounts: React.FC<DemoAccountsProps> = ({ onAccountSelect }) => {
                             justifyContent: 'center',
                             gap: '0.5rem'
                         }}>
-                            <span>🎯</span>
+                            <Target size={12} />
                             Mỗi role sẽ được điều hướng đến dashboard phù hợp
                         </p>
                     </div>

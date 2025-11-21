@@ -25,16 +25,14 @@ export {
   SECTION_BACKGROUNDS 
 } from './BackgroundSection';
 
-// Remove unused exports:
-// - Notification (not used)
-// - OptimizedCard (only used in backup files)
-// - LoadingSpinner (Spinner is used instead)
-// - ErrorBoundary (not used)
-// - SuspenseWrapper (not used)
-// - LazyImage (not used)
-// - PerformanceMonitor (not used)
-// - AnimatedCard (not used)
-// - ResponsiveComponents (not used)
-// - SkeletonLoaders (not used)
-// - SEOHead (not used)
-// - ScrollComponents (not used)
+// Teacher UI Components (new)
+export { default as DataTable } from './DataTable';
+export { default as FilterBar } from './FilterBar';
+export { default as StatusBadge } from './StatusBadge';
+export { default as ConfirmDialog } from './ConfirmDialog';
+
+// Type exports for Teacher UI
+export type { ColumnDef, DataTableProps } from './DataTable';
+export type { FilterConfig, FilterBarProps, FilterType } from './FilterBar';
+export type { StatusBadgeProps, StatusType } from './StatusBadge';
+export type { ConfirmDialogProps, DialogType } from './ConfirmDialog';

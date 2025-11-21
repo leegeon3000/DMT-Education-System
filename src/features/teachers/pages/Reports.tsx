@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../../store/slices/userSlice';
 import { SEOHead } from '../../../components/common';
 import TeacherLayout from '../../../components/layout/TeacherLayout';
-
-interface TeachingReport {
-  id: string;
-  month: string;
-  totalClasses: number;
-  totalHours: number;
-  studentsCount: number;
-  avgAttendance: number;
-  assignmentsGiven: number;
-  avgScore: number;
-}
+import teacherAPI, { TeachingReport } from '../../../services/teacherAPI';
+import { BarChart3, School, Users, CheckCircle, ClipboardList, GraduationCap, Target, FileSpreadsheet } from 'lucide-react';
 
 interface StudentProgress {
   studentId: string;
@@ -35,41 +28,69 @@ interface ClassSummary {
 }
 
 const Reports: React.FC = () => {
+  const user = useSelector(selectCurrentUser);
   const [activeTab, setActiveTab] = useState<'overview' | 'students' | 'classes'>('overview');
   const [selectedPeriod, setSelectedPeriod] = useState('2025-08');
-  
-  const [monthlyReports] = useState<TeachingReport[]>([
-    {
-      id: '1',
-      month: '2025-08',
-      totalClasses: 45,
-      totalHours: 68,
-      studentsCount: 156,
-      avgAttendance: 92.5,
-      assignmentsGiven: 12,
-      avgScore: 7.8
-    },
-    {
-      id: '2',
-      month: '2025-07',
-      totalClasses: 52,
-      totalHours: 78,
-      studentsCount: 148,
-      avgAttendance: 89.2,
-      assignmentsGiven: 15,
-      avgScore: 7.5
-    },
-    {
-      id: '3',
-      month: '2025-06',
-      totalClasses: 48,
-      totalHours: 72,
-      studentsCount: 152,
-      avgAttendance: 91.8,
-      assignmentsGiven: 13,
-      avgScore: 7.6
+  const [monthlyReports, setMonthlyReports] = useState<TeachingReport[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadReports();
+  }, [user?.teacher_id]);
+
+  const loadReports = async () => {
+    if (!user?.teacher_id) {
+      setLoading(false);
+      return;
     }
-  ]);
+
+    try {
+      setLoading(true);
+      const data = await teacherAPI.getTeachingReports(user.teacher_id);
+      
+      if (data.length === 0) {
+        const mockReports: TeachingReport[] = [
+          {
+            id: '1',
+            month: '2025-08',
+            totalClasses: 45,
+            totalHours: 68,
+            studentsCount: 156,
+            avgAttendance: 92.5,
+            assignmentsGiven: 12,
+            avgScore: 7.8
+          },
+          {
+            id: '2',
+            month: '2025-07',
+            totalClasses: 52,
+            totalHours: 78,
+            studentsCount: 148,
+            avgAttendance: 89.2,
+            assignmentsGiven: 15,
+            avgScore: 7.5
+          },
+          {
+            id: '3',
+            month: '2025-06',
+            totalClasses: 48,
+            totalHours: 72,
+            studentsCount: 152,
+            avgAttendance: 91.8,
+            assignmentsGiven: 13,
+            avgScore: 7.6
+          }
+        ];
+        setMonthlyReports(mockReports);
+      } else {
+        setMonthlyReports(data);
+      }
+    } catch (error) {
+      console.error('Error loading reports:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [studentProgress] = useState<StudentProgress[]>([
     {
@@ -191,8 +212,7 @@ const Reports: React.FC = () => {
         keywords="báo cáo, thống kê, kết quả học tập"
       />
       
-      <TeacherLayout>
-        <div style={{ padding: '24px' }}>
+      <div style={{ padding: '24px' }}>
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
             <div>
@@ -202,7 +222,7 @@ const Reports: React.FC = () => {
                 color: '#1e293b',
                 marginBottom: '4px'
               }}>
-                📈 Báo cáo & Thống kê
+                Báo cáo & Thống kê
               </h1>
               <p style={{ color: '#64748b', fontSize: '14px' }}>
                 Tổng hợp kết quả giảng dạy và học tập
@@ -238,10 +258,13 @@ const Reports: React.FC = () => {
                   border: 'none',
                   fontSize: '14px',
                   fontWeight: '500',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
                 }}
               >
-                📊 Xuất báo cáo
+                <FileSpreadsheet size={16} /> Xuất báo cáo
               </button>
             </div>
           </div>
@@ -272,7 +295,7 @@ const Reports: React.FC = () => {
                     {currentReport.totalHours} giờ học
                   </p>
                 </div>
-                <div style={{ fontSize: '32px' }}>🏫</div>
+                <div style={{ color: '#3b82f6' }}><School size={32} /></div>
               </div>
             </div>
 
@@ -295,7 +318,7 @@ const Reports: React.FC = () => {
                     Có mặt: {currentReport.avgAttendance}%
                   </p>
                 </div>
-                <div style={{ fontSize: '32px' }}>👥</div>
+                <div style={{ color: '#10b981' }}><Users size={32} /></div>
               </div>
             </div>
 
@@ -318,7 +341,7 @@ const Reports: React.FC = () => {
                     {currentReport.assignmentsGiven} bài tập
                   </p>
                 </div>
-                <div style={{ fontSize: '32px' }}>📊</div>
+                <div style={{ color: '#f59e0b' }}><BarChart3 size={32} /></div>
               </div>
             </div>
 
@@ -341,7 +364,7 @@ const Reports: React.FC = () => {
                     Tháng này
                   </p>
                 </div>
-                <div style={{ fontSize: '32px' }}>✅</div>
+                <div style={{ color: '#22c55e' }}><CheckCircle size={32} /></div>
               </div>
             </div>
           </div>
@@ -368,7 +391,8 @@ const Reports: React.FC = () => {
                 cursor: 'pointer'
               }}
             >
-              📋 Tổng quan
+              <ClipboardList size={16} style={{ display: 'inline', marginRight: '0.5rem' }} />
+              Tổng quan
             </button>
             <button
               onClick={() => setActiveTab('students')}
@@ -384,7 +408,8 @@ const Reports: React.FC = () => {
                 cursor: 'pointer'
               }}
             >
-              👨‍🎓 Học sinh
+              <GraduationCap size={16} style={{ display: 'inline', marginRight: '0.5rem' }} />
+              Học sinh
             </button>
             <button
               onClick={() => setActiveTab('classes')}
@@ -400,7 +425,8 @@ const Reports: React.FC = () => {
                 cursor: 'pointer'
               }}
             >
-              🏫 Lớp học
+              <School size={16} style={{ display: 'inline', marginRight: '0.5rem' }} />
+              Lớp học
             </button>
           </div>
 
@@ -426,7 +452,7 @@ const Reports: React.FC = () => {
                   {/* Monthly Trend */}
                   <div>
                     <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
-                      📈 Xu hướng 3 tháng
+                      Xu hướng 3 tháng
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {monthlyReports.slice(0, 3).map((report) => (
@@ -460,8 +486,8 @@ const Reports: React.FC = () => {
 
                   {/* Performance Summary */}
                   <div>
-                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
-                      🎯 Hiệu suất giảng dạy
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Target size={18} /> Hiệu suất giảng dạy
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <div style={{
@@ -693,9 +719,8 @@ const Reports: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
+            )}
         </div>
-      </TeacherLayout>
     </>
   );
 };

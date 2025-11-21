@@ -3,19 +3,19 @@
   "name": "DMT Education System",
   "icons": [
     {
-      "src": "icon-192x192.png",
+      "src": "images/LOGO/LOGO DMT-01.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512x512.png",
+      "src": "images/LOGO/LOGO DMT-01.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#4A90E2",
+  "theme_color": "#dc2626",
   "background_color": "#FFFFFF",
   "description": "A comprehensive education management system for DMT, providing tools for students, teachers, and administrators."
 }

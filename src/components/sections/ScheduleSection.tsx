@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icons } from '../common/Icons';
 import { useOptimizedAnimation } from '../../hooks/useOptimizedAnimation';
+import { Calendar } from 'lucide-react';
 
 const ScheduleSection: React.FC = () => {
   const { ref: scheduleRef, inView: scheduleInView } = useOptimizedAnimation();
@@ -193,9 +194,12 @@ const ScheduleSection: React.FC = () => {
               background: 'rgba(245, 158, 11, 0.1)',
               borderRadius: '10px',
               fontSize: '14px',
-              color: '#92400e'
+              color: '#92400e',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}>
-              <strong>📅 Khai giảng:</strong> 15/01/2025
+              <Calendar size={16} /> <strong>Khai giảng:</strong> 15/01/2025
             </div>
           </div>
 
@@ -330,7 +334,9 @@ const ScheduleSection: React.FC = () => {
               fontSize: '14px',
               color: '#92400e'
             }}>
-              <strong>📅 Khai giảng:</strong> 20/01/2025
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar size={16} /> <strong>Khai giảng:</strong>
+              </span> 20/01/2025
             </div>
           </div>
 
@@ -465,7 +471,9 @@ const ScheduleSection: React.FC = () => {
               fontSize: '14px',
               color: '#92400e'
             }}>
-              <strong>📅 Khai giảng:</strong> 25/01/2025
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar size={16} /> <strong>Khai giảng:</strong>
+              </span> 25/01/2025
             </div>
           </div>
         </div>

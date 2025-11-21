@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     children, 
     allowedRoles = [], 
     requireAuth = true,
-    fallbackPath = '/login' 
+    fallbackPath = '/auth/login' 
 }) => {
     const location = useLocation();
     const user = useSelector(selectCurrentUser);
@@ -28,7 +28,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                 display: 'flex', 
                 justifyContent: 'center', 
                 alignItems: 'center', 
-                minHeight: '100vh' 
+                minHeight: '100vh',
+                backgroundColor: '#f9fafb'
             }}>
                 <LoadingSpinner size="large" />
             </div>
@@ -51,8 +52,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                 to="/unauthorized" 
                 state={{ 
                     from: location.pathname,
-                    requiredRoles: allowedRoles,
-                    userRole: user.role
+                    requiredRoles: allowedRoles.map(role => role.toString()),
+                    userRole: user.role.toString()
                 }} 
                 replace 
             />;
@@ -60,7 +61,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     // If user is authenticated but trying to access login page, redirect to dashboard
-    if (!requireAuth && user.isAuthenticated && location.pathname === '/login') {
+    if (!requireAuth && user.isAuthenticated && location.pathname === '/auth/login') {
         const dashboardPath = getDashboardPath(user.role);
         return <Navigate to={dashboardPath} replace />;
     }
@@ -74,13 +75,13 @@ const getDashboardPath = (role: Role | null): string => {
         case Role.ADMIN:
             return '/admin/dashboard';
         case Role.TEACHER:
-            return '/teachers/assignments';
+            return '/teacher/dashboard';
         case Role.STUDENT:
             return '/students/dashboard';
         case Role.STAFF:
-            return '/staff/tasks';
+            return '/staff/dashboard';
         default:
-            return '/students/dashboard';
+            return '/';
     }
 };
 

@@ -27,7 +27,7 @@ export class ErrorBoundary extends React.Component<
           color: '#dc2626',
           backgroundColor: '#fef2f2',
           borderRadius: '8px',
-          border: '1px solid #fecaca'
+          border: '1px solid #ffffffff'
         }}>
           <h3>Đã xảy ra lỗi</h3>
           <p>Vui lòng tải lại trang hoặc liên hệ hỗ trợ.</p>

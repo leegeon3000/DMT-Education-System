@@ -144,31 +144,31 @@ export const GradientBackground: React.FC<{
 // Predefined background configurations for different sections
 export const SECTION_BACKGROUNDS = {
   hero: {
-    image: '/confident-teacher-explaining-lesson-pupils.jpg',
+    image: '/images/ANH-GV/DMT-25-14.jpg', 
     overlay: true,
     overlayColor: 'rgba(59, 130, 246, 0.8)', // Blue overlay
     parallax: true
   },
   about: {
-    image: '/little-classmates-discussing-lesson-doing-task.jpg',
+    image: '/images/ANH-HOC-SINH/DMT-25-23.jpg',
     overlay: true,
     overlayColor: 'rgba(16, 185, 129, 0.7)', // Green overlay
     parallax: false
   },
   courses: {
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #ffffffff 100%)',
     animated: true
   },
   achievements: {
     image: '/young-boy-playing-aviator-toy-air-plane-imagination-dreaming-being-pilot-future-business-district-urban.jpg',
     overlay: true,
-    overlayColor: 'rgba(139, 69, 19, 0.6)', // Brown overlay for dreams/future theme
+    overlayColor: 'rgba(139, 69, 19, 0.6)',
     parallax: true
   },
   contact: {
-    image: '/front-view-school-covid-concept.jpg',
+    image: '/images/ANH-HOC-SINH/DMT-25-26_1.jpg',
     overlay: true,
-    overlayColor: 'rgba(79, 70, 229, 0.8)', // Indigo overlay
+    overlayColor: 'rgba(255, 255, 255, 1)', // Light overlay
     parallax: false
   },
   schedule: {

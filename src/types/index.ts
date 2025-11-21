@@ -1,5 +1,26 @@
 // This file defines TypeScript types and interfaces used throughout the application.
 
+export type PaymentStatus = 'completed' | 'pending' | 'failed' | 'refunded';
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'credit_card' | 'e_wallet';
+
+export interface PaymentTransaction {
+    id: string;
+    date: string;
+    studentId: string;
+    studentName: string;
+    courseId: string;
+    courseName: string;
+    amount: number;
+    status: PaymentStatus;
+    paymentMethod: PaymentMethod;
+    description: string;
+    paymentDetails?: string;
+    receiptNumber?: string;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
 export interface User {
     id: string;
     username: string;

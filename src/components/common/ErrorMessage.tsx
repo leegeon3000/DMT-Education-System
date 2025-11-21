@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertTriangle } from 'lucide-react';
 
 interface ErrorMessageProps {
   message: string;
@@ -11,7 +12,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry }) => {
       padding: '2rem',
       textAlign: 'center',
       backgroundColor: '#FEF2F2',
-      border: '1px solid #FECACA',
+      border: '1px solid #ffffffff',
       borderRadius: '8px',
       margin: '1rem 0'
     }}>
@@ -19,9 +20,13 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry }) => {
         color: '#DC2626',
         fontSize: '1.125rem',
         fontWeight: '600',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem'
       }}>
-        ⚠️ Có lỗi xảy ra
+        <AlertTriangle size={20} /> Có lỗi xảy ra
       </div>
       
       <p style={{

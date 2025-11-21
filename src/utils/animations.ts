@@ -1,337 +1,307 @@
-// Animation utility functions for DMT Education System
-import { ANIMATIONS } from '../constants';
+/**
+ * Animation Utilities for Framer Motion
+ * Reusable animation variants and configurations
+ */
 
-// Animation constants
-const ANIMATION_CONFIG = {
-  durations: {
-    fast: 200,
-    normal: 300,
-    slow: 500
-  },
-  easing: {
-    easeOut: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-    easeIn: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
-    easeInOut: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-    bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+import { Variants } from 'framer-motion';
+
+/**
+ * Fade in animations
+ */
+export const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { duration: 0.6 }
   }
 };
 
-export const animations = {
-  // CSS animation helpers
-  fadeIn: (element: HTMLElement, duration = ANIMATION_CONFIG.durations.normal): void => {
-    element.style.opacity = '0';
-    element.style.transition = `opacity ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-    
-    requestAnimationFrame(() => {
-      element.style.opacity = '1';
-    });
-  },
+export const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut' }
+  }
+};
 
-  fadeOut: (element: HTMLElement, duration = ANIMATION_CONFIG.durations.normal): Promise<void> => {
-    return new Promise((resolve) => {
-      element.style.transition = `opacity ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-      element.style.opacity = '0';
-      
-      setTimeout(() => resolve(), duration);
-    });
-  },
+export const fadeInDown: Variants = {
+  hidden: { opacity: 0, y: -30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut' }
+  }
+};
 
-  slideIn: (element: HTMLElement, direction: 'up' | 'down' | 'left' | 'right' = 'up', duration = ANIMATION_CONFIG.durations.normal): void => {
-    const transforms = {
-      up: 'translateY(20px)',
-      down: 'translateY(-20px)',
-      left: 'translateX(20px)',
-      right: 'translateX(-20px)'
-    };
+export const fadeInLeft: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.6, ease: 'easeOut' }
+  }
+};
 
-    element.style.transform = transforms[direction];
-    element.style.opacity = '0';
-    element.style.transition = `all ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-    
-    requestAnimationFrame(() => {
-      element.style.transform = 'translate(0)';
-      element.style.opacity = '1';
-    });
-  },
+export const fadeInRight: Variants = {
+  hidden: { opacity: 0, x: 30 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.6, ease: 'easeOut' }
+  }
+};
 
-  slideOut: (element: HTMLElement, direction: 'up' | 'down' | 'left' | 'right' = 'up', duration = ANIMATION_CONFIG.durations.normal): Promise<void> => {
-    return new Promise((resolve) => {
-      const transforms = {
-        up: 'translateY(-20px)',
-        down: 'translateY(20px)',
-        left: 'translateX(-20px)',
-        right: 'translateX(20px)'
-      };
+/**
+ * Scale animations
+ */
+export const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: { duration: 0.5, ease: 'easeOut' }
+  }
+};
 
-      element.style.transition = `all ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-      element.style.transform = transforms[direction];
-      element.style.opacity = '0';
-      
-      setTimeout(() => resolve(), duration);
-    });
-  },
+export const scaleUp: Variants = {
+  hidden: { scale: 0 },
+  visible: { 
+    scale: 1,
+    transition: { type: 'spring', stiffness: 200, damping: 15 }
+  }
+};
 
-  scale: (element: HTMLElement, scale = 1.05, duration = ANIMATION_CONFIG.durations.fast): void => {
-    element.style.transition = `transform ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-    element.style.transform = `scale(${scale})`;
-    
-    setTimeout(() => {
-      element.style.transform = 'scale(1)';
-    }, duration);
-  },
-
-  bounce: (element: HTMLElement, intensity = 0.1, duration = ANIMATION_CONFIG.durations.normal): void => {
-    const keyframes = [
-      { transform: 'scale(1)', offset: 0 },
-      { transform: `scale(${1 + intensity})`, offset: 0.5 },
-      { transform: 'scale(1)', offset: 1 }
-    ];
-
-    element.animate(keyframes, {
-      duration: duration,
-      easing: ANIMATION_CONFIG.easing.bounce
-    });
-  },
-
-  shake: (element: HTMLElement, intensity = 5, duration = ANIMATION_CONFIG.durations.fast): void => {
-    const keyframes = [
-      { transform: 'translateX(0)', offset: 0 },
-      { transform: `translateX(-${intensity}px)`, offset: 0.25 },
-      { transform: `translateX(${intensity}px)`, offset: 0.75 },
-      { transform: 'translateX(0)', offset: 1 }
-    ];
-
-    element.animate(keyframes, {
-      duration: duration,
-      easing: ANIMATION_CONFIG.easing.easeInOut
-    });
-  },
-
-  pulse: (element: HTMLElement, intensity = 0.05, duration = ANIMATION_CONFIG.durations.normal): void => {
-    const keyframes = [
-      { transform: 'scale(1)', opacity: '1', offset: 0 },
-      { transform: `scale(${1 + intensity})`, opacity: '0.8', offset: 0.5 },
-      { transform: 'scale(1)', opacity: '1', offset: 1 }
-    ];
-
-    element.animate(keyframes, {
-      duration: duration,
-      easing: ANIMATION_CONFIG.easing.easeInOut,
-      iterations: Infinity
-    });
-  },
-
-  // Advanced animations
-  typeWriter: (element: HTMLElement, text: string, speed = 50): Promise<void> => {
-    return new Promise((resolve) => {
-      element.textContent = '';
-      let i = 0;
-      
-      const timer = setInterval(() => {
-        if (i < text.length) {
-          element.textContent += text.charAt(i);
-          i++;
-        } else {
-          clearInterval(timer);
-          resolve();
-        }
-      }, speed);
-    });
-  },
-
-  countUp: (element: HTMLElement, start: number, end: number, duration = 2000): Promise<void> => {
-    return new Promise((resolve) => {
-      const startTime = performance.now();
-      const difference = end - start;
-
-      const step = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
-        const current = Math.floor(start + (difference * easeProgress));
-        
-        element.textContent = current.toString();
-        
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          element.textContent = end.toString();
-          resolve();
-        }
-      };
-      
-      requestAnimationFrame(step);
-    });
-  },
-
-  progressBar: (element: HTMLElement, percentage: number, duration = ANIMATION_CONFIG.durations.normal): Promise<void> => {
-    return new Promise((resolve) => {
-      element.style.width = '0%';
-      element.style.transition = `width ${duration}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-      
-      requestAnimationFrame(() => {
-        element.style.width = `${percentage}%`;
-      });
-      
-      setTimeout(() => resolve(), duration);
-    });
-  },
-
-  // Scroll animations
-  scrollReveal: (elements: NodeListOf<Element> | Element[], threshold = 0.1): void => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const element = entry.target as HTMLElement;
-          animations.slideIn(element, 'up');
-          observer.unobserve(element);
-        }
-      });
-    }, { threshold });
-
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
-  },
-
-  parallax: (element: HTMLElement, speed = 0.5): () => void => {
-    const updateParallax = () => {
-      const scrolled = window.pageYOffset;
-      const rate = scrolled * -speed;
-      element.style.transform = `translateY(${rate}px)`;
-    };
-
-    window.addEventListener('scroll', updateParallax);
-    
-    // Return cleanup function
-    return () => {
-      window.removeEventListener('scroll', updateParallax);
-    };
-  },
-
-  // Loading animations
-  spinner: (element: HTMLElement): void => {
-    const keyframes = [
-      { transform: 'rotate(0deg)' },
-      { transform: 'rotate(360deg)' }
-    ];
-
-    element.animate(keyframes, {
-      duration: 1000,
-      easing: 'linear',
-      iterations: Infinity
-    });
-  },
-
-  skeleton: (element: HTMLElement): void => {
-    element.classList.add('skeleton-loading');
-    
-    const keyframes = [
-      { backgroundPosition: '-200px 0' },
-      { backgroundPosition: 'calc(200px + 100%) 0' }
-    ];
-
-    element.animate(keyframes, {
-      duration: 1300,
-      easing: 'ease-in-out',
-      iterations: Infinity
-    });
-  },
-
-  // Card animations
-  cardHover: (element: HTMLElement): () => void => {
-    const handleMouseEnter = () => {
-      element.style.transition = `all ${ANIMATION_CONFIG.durations.fast}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-      element.style.transform = 'translateY(-4px)';
-      element.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
-    };
-
-    const handleMouseLeave = () => {
-      element.style.transform = 'translateY(0)';
-      element.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-    };
-
-    element.addEventListener('mouseenter', handleMouseEnter);
-    element.addEventListener('mouseleave', handleMouseLeave);
-    
-    // Return cleanup function
-    return () => {
-      element.removeEventListener('mouseenter', handleMouseEnter);
-      element.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  },
-
-  // Button animations
-  buttonClick: (element: HTMLElement): void => {
-    element.addEventListener('click', () => {
-      animations.scale(element, 0.95, ANIMATION_CONFIG.durations.fast);
-    });
-  },
-
-  // Page transitions
-  pageTransition: {
-    fadeIn: (element: HTMLElement): Promise<void> => {
-      return new Promise((resolve) => {
-        element.style.opacity = '0';
-        element.style.transition = `opacity ${ANIMATION_CONFIG.durations.normal}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-        
-        requestAnimationFrame(() => {
-          element.style.opacity = '1';
-          setTimeout(() => resolve(), ANIMATION_CONFIG.durations.normal);
-        });
-      });
-    },
-
-    slideFromRight: (element: HTMLElement): Promise<void> => {
-      return new Promise((resolve) => {
-        element.style.transform = 'translateX(100%)';
-        element.style.transition = `transform ${ANIMATION_CONFIG.durations.normal}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-        
-        requestAnimationFrame(() => {
-          element.style.transform = 'translateX(0)';
-          setTimeout(() => resolve(), ANIMATION_CONFIG.durations.normal);
-        });
-      });
-    },
-
-    slideFromLeft: (element: HTMLElement): Promise<void> => {
-      return new Promise((resolve) => {
-        element.style.transform = 'translateX(-100%)';
-        element.style.transition = `transform ${ANIMATION_CONFIG.durations.normal}ms ${ANIMATION_CONFIG.easing.easeOut}`;
-        
-        requestAnimationFrame(() => {
-          element.style.transform = 'translateX(0)';
-          setTimeout(() => resolve(), ANIMATION_CONFIG.durations.normal);
-        });
-      });
+/**
+ * Stagger container animations
+ */
+export const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
     }
-  },
-
-  // Utility functions
-  getRandomDelay: (min = 0, max = 500): number => {
-    return Math.random() * (max - min) + min;
-  },
-
-  staggeredAnimation: (elements: NodeListOf<Element> | Element[], animationFn: Function, delay = ANIMATIONS.delays.normal): void => {
-    elements.forEach((element, index) => {
-      setTimeout(() => {
-        animationFn(element);
-      }, index * delay);
-    });
-  },
-
-  createCSSAnimation: (name: string, keyframes: Record<string, any>): void => {
-    const styleSheet = document.styleSheets[0];
-    const keyframeRule = `@keyframes ${name} {
-      ${Object.entries(keyframes).map(([key, value]) => 
-        `${key} { ${Object.entries(value).map(([prop, val]) => `${prop}: ${val}`).join('; ')} }`
-      ).join('\n')}
-    }`;
-    
-    styleSheet.insertRule(keyframeRule, styleSheet.cssRules.length);
   }
 };
 
-export default animations;
+export const staggerItem: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 }
+  }
+};
+
+/**
+ * Slide animations
+ */
+export const slideInLeft: Variants = {
+  hidden: { x: '-100%' },
+  visible: { 
+    x: 0,
+    transition: { type: 'spring', stiffness: 100, damping: 20 }
+  }
+};
+
+export const slideInRight: Variants = {
+  hidden: { x: '100%' },
+  visible: { 
+    x: 0,
+    transition: { type: 'spring', stiffness: 100, damping: 20 }
+  }
+};
+
+/**
+ * Rotation animations
+ */
+export const rotate: Variants = {
+  hidden: { rotate: -180, opacity: 0 },
+  visible: { 
+    rotate: 0, 
+    opacity: 1,
+    transition: { duration: 0.7, ease: 'easeOut' }
+  }
+};
+
+/**
+ * Bounce animation
+ */
+export const bounce: Variants = {
+  hidden: { y: -20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 10
+    }
+  }
+};
+
+/**
+ * Float animation (continuous)
+ */
+export const floatAnimation = {
+  y: [-10, 10],
+  transition: {
+    y: {
+      duration: 2,
+      repeat: Infinity,
+      repeatType: 'reverse' as const,
+      ease: 'easeInOut'
+    }
+  }
+};
+
+/**
+ * Pulse animation (continuous)
+ */
+export const pulseAnimation = {
+  scale: [1, 1.05, 1],
+  transition: {
+    duration: 2,
+    repeat: Infinity,
+    ease: 'easeInOut'
+  }
+};
+
+/**
+ * Hover animations
+ */
+export const hoverScale = {
+  scale: 1.05,
+  transition: { duration: 0.3 }
+};
+
+export const hoverLift = {
+  y: -10,
+  transition: { duration: 0.3 }
+};
+
+export const hoverGlow = {
+  boxShadow: '0 10px 40px rgba(59, 130, 246, 0.3)',
+  transition: { duration: 0.3 }
+};
+
+/**
+ * Page transition animations
+ */
+export const pageTransition = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 },
+  transition: { duration: 0.3 }
+};
+
+/**
+ * Number counter animation configuration
+ */
+export const counterConfig = {
+  start: 0,
+  duration: 2.5,
+  delay: 0.5,
+  useEasing: true,
+  separator: ',',
+  decimal: '.',
+};
+
+/**
+ * Scroll reveal hook configuration
+ */
+export const scrollRevealConfig = {
+  threshold: 0.1,
+  triggerOnce: true,
+  rootMargin: '0px 0px -100px 0px'
+};
+
+/**
+ * Card hover variant
+ */
+export const cardHover: Variants = {
+  rest: { 
+    scale: 1,
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+  },
+  hover: {
+    scale: 1.03,
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    transition: { duration: 0.3 }
+  }
+};
+
+/**
+ * Button press animation
+ */
+export const buttonPress = {
+  scale: 0.95,
+  transition: { duration: 0.1 }
+};
+
+/**
+ * Glassmorphism card animation
+ */
+export const glassCard: Variants = {
+  hidden: { 
+    opacity: 0, 
+    y: 50,
+    backdropFilter: 'blur(0px)'
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    backdropFilter: 'blur(10px)',
+    transition: { duration: 0.6 }
+  }
+};
+
+/**
+ * Gradient animation (for backgrounds)
+ */
+export const gradientAnimation = {
+  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+  transition: {
+    duration: 5,
+    repeat: Infinity,
+    ease: 'linear'
+  }
+};
+
+/**
+ * Text reveal animation
+ */
+export const textReveal: Variants = {
+  hidden: { 
+    opacity: 0,
+    y: 20,
+    skewY: 3
+  },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    skewY: 0,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.6,
+      ease: 'easeOut'
+    }
+  })
+};
+
+/**
+ * Draw line animation (for decorative lines)
+ */
+export const drawLine: Variants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      pathLength: { duration: 2, ease: 'easeInOut' },
+      opacity: { duration: 0.5 }
+    }
+  }
+};

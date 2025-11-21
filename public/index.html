@@ -56,9 +56,9 @@
         <h1>🎓 DMT Education System</h1>
         <p>Hệ thống giáo dục hàng đầu Việt Nam</p>
         <div class="status">
-            <div class="status-item">✅ HTML: Hoạt động</div>
-            <div class="status-item">✅ CSS: Hoạt động</div>
-            <div class="status-item">✅ Server: Hoạt động</div>
+            <div class="status-item">HTML: Hoạt động</div>
+            <div class="status-item">CSS: Hoạt động</div>
+            <div class="status-item">Server: Hoạt động</div>
             <div class="status-item" id="js-status">⏳ JavaScript: Đang tải...</div>
             <div class="status-item" id="react-status">⏳ React: Đang tải...</div>
         </div>
@@ -67,16 +67,16 @@
     <div id="root"></div>
     
     <script>
-        console.log('✅ HTML & CSS loaded successfully!');
-        document.getElementById('js-status').innerHTML = '✅ JavaScript: Hoạt động';
+        console.log('HTML & CSS loaded successfully!');
+        document.getElementById('js-status').innerHTML = 'JavaScript: Hoạt động';
         
         // Test if React will load
         setTimeout(() => {
             const rootElement = document.getElementById('root');
             if (rootElement && rootElement.innerHTML) {
-                document.getElementById('react-status').innerHTML = '✅ React: Hoạt động';
+                document.getElementById('react-status').innerHTML = 'React: Hoạt động';
             } else {
-                document.getElementById('react-status').innerHTML = '❌ React: Chưa tải';
+                document.getElementById('react-status').innerHTML = 'React: Chưa tải';
             }
         }, 2000);
     </script>

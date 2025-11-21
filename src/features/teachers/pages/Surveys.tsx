@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Star } from 'lucide-react';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
@@ -379,10 +380,20 @@ const ResponsesModal: React.FC<{
               <div>
                 {responses.map(response => {
                   const answer = response.answers.find(a => a.questionId === question.id);
+                  const rating = answer?.answer as number || 0;
                   return (
-                    <div key={response.studentId} className="flex justify-between text-sm">
+                    <div key={response.studentId} className="flex justify-between items-center text-sm">
                       <span>{response.studentName}</span>
-                      <span>{'★'.repeat(answer?.answer as number || 0)}{'☆'.repeat(5 - (answer?.answer as number || 0))}</span>
+                      <span className="flex gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            size={16} 
+                            fill={i < rating ? 'currentColor' : 'none'}
+                            className={i < rating ? 'text-yellow-400' : 'text-gray-300'}
+                          />
+                        ))}
+                      </span>
                     </div>
                   );
                 })}
