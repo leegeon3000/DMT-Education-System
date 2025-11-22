@@ -211,7 +211,7 @@ const analyticsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const result = await pool.request().query(`
         SELECT 
-          (SELECT COUNT(*) FROM USERS WHERE STATUS = 'ACTIVE') as TotalUsers,
+          (SELECT COUNT(*) FROM USERS WHERE STATUS = 1) as TotalUsers,
           (SELECT COUNT(*) FROM COURSES WHERE IS_ACTIVE = 1) as ActiveCourses,
           (SELECT COUNT(*) FROM CLASSES WHERE STATUS = 'ACTIVE') as ActiveClasses,
           (SELECT SUM(AMOUNT) FROM PAYMENTS WHERE STATUS = 'COMPLETED' AND PAYMENT_DATE >= DATEADD(MONTH, -1, GETDATE())) as MonthlyRevenue

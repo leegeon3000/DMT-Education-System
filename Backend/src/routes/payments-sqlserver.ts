@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { getPool } from '../utils/database.js';
 import sql from 'mssql';
 
 interface PaymentQueryParams {
@@ -21,7 +22,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
     '/payments',
     async (request: FastifyRequest<{ Querystring: PaymentQueryParams }>, reply: FastifyReply) => {
       try {
-        const pool = await sql.connect(fastify.config.DB_CONFIG);
+        const pool = await getPool();
         
         const { 
           status, 
@@ -52,8 +53,8 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
             s.STUDENT_CODE,
             u.FULL_NAME as STUDENT_NAME,
             u.EMAIL as STUDENT_EMAIL,
-            c.CLASS_CODE,
-            c.CLASS_NAME,
+            c.CODE as CLASS_CODE,
+            c.NAME as CLASS_NAME,
             e.ENROLLMENT_DATE
           FROM PAYMENTS p
           INNER JOIN ENROLLMENTS e ON p.ENROLLMENT_ID = e.ID
@@ -168,7 +169,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
     '/payments/:id',
     async (request: FastifyRequest<{ Params: PaymentIdParam }>, reply: FastifyReply) => {
       try {
-        const pool = await sql.connect(fastify.config.DB_CONFIG);
+        const pool = await getPool();
         const { id } = request.params;
 
         const result = await pool.request()
@@ -193,8 +194,8 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
               u.FULL_NAME as STUDENT_NAME,
               u.EMAIL as STUDENT_EMAIL,
               u.PHONE as STUDENT_PHONE,
-              c.CLASS_CODE,
-              c.CLASS_NAME,
+              c.CODE as CLASS_CODE,
+              c.NAME as CLASS_NAME,
               e.ENROLLMENT_DATE
             FROM PAYMENTS p
             INNER JOIN ENROLLMENTS e ON p.ENROLLMENT_ID = e.ID
@@ -229,7 +230,7 @@ export default async function paymentsRoutes(fastify: FastifyInstance) {
   // GET /api/payments/stats/summary - Get payment statistics
   fastify.get('/payments/stats/summary', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const pool = await sql.connect(fastify.config.DB_CONFIG);
+      const pool = await getPool();
 
       const result = await pool.request().query(`
         SELECT 
