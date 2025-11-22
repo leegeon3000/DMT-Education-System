@@ -11,7 +11,8 @@ import { enrollmentsRoutes } from '../routes/enrollments';
 import { attendanceRoutes } from '../routes/attendance';
 import { assignmentsRoutes } from '../routes/assignments';
 import { materialsRoutes } from '../routes/materials';
-import { paymentsRoutes } from '../routes/payments';
+import paymentsSqlServerRoutes from '../routes/payments-sqlserver.js'; // SQL Server version
+import financeSqlServerRoutes from '../routes/finance-sqlserver.js'; // SQL Server version
 import { surveysRoutes } from '../routes/surveys';
 import staffSqlServerRoutes from '../routes/staff-sqlserver.js'; // SQL Server version
 import { newsRoutes } from '../routes/news';
@@ -40,7 +41,8 @@ export default async function registerRoutes(app: FastifyInstance) {
   // Academic entity routes - UPDATED WITH STORED PROCEDURES
   await enrollmentsRoutes(app);  // Uses sp_EnrollStudent, sp_DropEnrollment
   await attendanceRoutes(app);   // Uses sp_BulkMarkAttendance
-  await paymentsRoutes(app);     // Uses sp_ProcessPayment, sp_RefundPayment
+  await app.register(paymentsSqlServerRoutes, { prefix: '/api' });  // Payments - SQL Server
+  await app.register(financeSqlServerRoutes, { prefix: '/api' });  // Finance - SQL Server
   await reportsRoutes(app);      // Uses sp_GetSystemOverview, sp_GetStudentReport, sp_GetClassReport
   
   // New advanced routes - ACTIVE FOR SQL SERVER

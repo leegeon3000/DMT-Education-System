@@ -13,8 +13,9 @@ import {
   Printer
 } from 'lucide-react';
 import Spinner from '../../../components/common/Spinner';
+import { apiClient } from '../../../services/auth';
 
-// Mock financial data
+// Financial data interfaces
 interface MonthlyRevenue {
   month: string;
   year: number;
@@ -45,62 +46,6 @@ interface Payment {
   status: 'completed' | 'pending' | 'failed' | 'refunded';
   note?: string;
 }
-
-// Mock data
-const mockMonthlyRevenue: MonthlyRevenue[] = Array.from({ length: 12 }, (_, idx) => {
-  const month = new Date(2023, idx, 1).toLocaleString('vi-VN', { month: 'short' });
-  const baseAmount = 400000000 + Math.random() * 200000000;
-  
-  return {
-    month,
-    year: 2023,
-    tuitionFees: Math.round(baseAmount * 0.7),
-    bookSales: Math.round(baseAmount * 0.1),
-    examFees: Math.round(baseAmount * 0.15),
-    otherIncome: Math.round(baseAmount * 0.05)
-  };
-});
-
-const mockExpenses: Expense[] = Array.from({ length: 20 }, (_, idx) => {
-  const categories = [
-    'Lương nhân viên', 'Tiền thuê nhà', 'Tiền điện', 'Tiền nước', 
-    'Tiếp thị và quảng cáo', 'Trang thiết bị', 'Bảo trì', 'Khác'
-  ];
-  
-  const date = new Date(2023, Math.floor(idx / 2), Math.floor(1 + Math.random() * 28));
-  
-  return {
-    id: `EXP${(idx + 1).toString().padStart(4, '0')}`,
-    date: date.toLocaleDateString('vi-VN'),
-    category: categories[idx % categories.length],
-    amount: Math.round((100000000 + Math.random() * 100000000) / 10),
-    description: `Chi phí ${categories[idx % categories.length].toLowerCase()} tháng ${date.getMonth() + 1}`,
-    paymentMethod: ['Chuyển khoản', 'Tiền mặt', 'Thẻ tín dụng'][idx % 3]
-  };
-});
-
-const mockPayments: Payment[] = Array.from({ length: 50 }, (_, idx) => {
-  const date = new Date(2023, Math.floor(idx / 5), Math.floor(1 + Math.random() * 28));
-  const statuses: ('completed' | 'pending' | 'failed' | 'refunded')[] = ['completed', 'pending', 'failed', 'refunded'];
-  const paymentMethods = ['Chuyển khoản', 'Tiền mặt', 'Thẻ tín dụng', 'Ví điện tử', 'Thanh toán online'];
-  const courses = [
-    'Toán học nâng cao', 'Vật lý cơ bản', 'Hóa học chuyên sâu', 
-    'Tiếng Anh giao tiếp', 'Ngữ văn và văn học'
-  ];
-  
-  return {
-    id: `PAY${(idx + 1).toString().padStart(4, '0')}`,
-    studentId: `STD${Math.floor(1000 + Math.random() * 9000)}`,
-    studentName: ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Hoàng Cường', 'Phạm Minh Đức', 'Hoàng Thị Em'][idx % 5],
-    date: date.toLocaleDateString('vi-VN'),
-    amount: Math.round(5000000 + Math.random() * 5000000),
-    paymentMethod: paymentMethods[idx % paymentMethods.length],
-    courseId: `CRS${Math.floor(1000 + Math.random() * 9000)}`,
-    courseName: courses[idx % courses.length],
-    status: Math.random() > 0.8 ? statuses[1 + Math.floor(Math.random() * 3)] : 'completed',
-    note: Math.random() > 0.8 ? 'Thanh toán một phần' : undefined
-  };
-});
 
 // Chart Components
 const BarChart: React.FC<{ data: MonthlyRevenue[] }> = ({ data }) => {
@@ -213,37 +158,41 @@ const FinanceReport: React.FC = () => {
   });
 
   useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setMonthlyRevenue(mockMonthlyRevenue);
-      setPayments(mockPayments);
-      setExpenses(mockExpenses);
-      
-      // Calculate summary
-      const totalRevenue = mockMonthlyRevenue.reduce(
-        (sum, item) => sum + item.tuitionFees + item.bookSales + item.examFees + item.otherIncome, 
-        0
-      );
-      
-      const totalExpenses = mockExpenses.reduce((sum, item) => sum + item.amount, 0);
-      const pendingPayments = mockPayments.filter(p => p.status === 'pending').length;
-      const completedPayments = mockPayments.filter(p => p.status === 'completed').length;
-      const refundedPayments = mockPayments.filter(p => p.status === 'refunded').length;
-      
-      setSummary({
-        totalRevenue,
-        totalExpenses,
-        netProfit: totalRevenue - totalExpenses,
-        pendingPayments,
-        completedPayments,
-        refundedPayments
-      });
-      
-      setLoading(false);
-    }, 1000);
+    const fetchFinanceData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch monthly revenue
+        const revenueResponse = await apiClient.get('/finance/monthly-revenue', {
+          params: { year: yearFilter }
+        });
+        setMonthlyRevenue(revenueResponse.data);
+        
+        // Fetch expenses
+        const expensesResponse = await apiClient.get('/finance/expenses', {
+          params: { year: yearFilter }
+        });
+        setExpenses(expensesResponse.data);
+        
+        // Fetch payments
+        const paymentsResponse = await apiClient.get('/payments');
+        setPayments(paymentsResponse.data);
+        
+        // Fetch summary
+        const summaryResponse = await apiClient.get('/finance/summary', {
+          params: { year: yearFilter }
+        });
+        setSummary(summaryResponse.data);
+        
+      } catch (error) {
+        console.error('Error fetching finance data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    return () => clearTimeout(timer);
-  }, []);
+    fetchFinanceData();
+  }, [yearFilter]);
 
   // Filter data based on year and month
   const filteredMonthlyRevenue = monthlyRevenue.filter(item => item.year === yearFilter);

@@ -20,7 +20,68 @@ import {
   CreditCard
 } from 'lucide-react';
 import { PaymentTransaction, PaymentStatus, PaymentMethod } from '../../../types';
-import { mockPayments } from '../../../data/paymentData';
+import apiClient from '../../../services/api';
+
+// Interface for API response
+interface PaymentFromAPI {
+  ID: number;
+  PAYMENT_CODE: string;
+  ENROLLMENT_ID: number;
+  AMOUNT: number;
+  PAYMENT_DATE: string;
+  PAYMENT_METHOD: string;
+  STATUS: string;
+  RECEIPT_NUMBER: string | null;
+  DESCRIPTION: string;
+  PAYMENT_DETAILS: string | null;
+  CREATED_BY: string;
+  CREATED_AT: string;
+  UPDATED_AT: string | null;
+  STUDENT_ID: number;
+  STUDENT_CODE: string;
+  STUDENT_NAME: string;
+  STUDENT_EMAIL: string;
+  CLASS_CODE: string;
+  CLASS_NAME: string;
+  ENROLLMENT_DATE: string;
+}
+
+// Normalize API data to match frontend interface
+const normalizePayment = (payment: PaymentFromAPI): PaymentTransaction => {
+  // Map database payment methods to frontend types
+  const methodMap: Record<string, PaymentMethod> = {
+    'CASH': 'cash',
+    'BANK_TRANSFER': 'bank_transfer',
+    'CREDIT_CARD': 'credit_card',
+    'E_WALLET': 'e_wallet'
+  };
+
+  // Map database status to frontend types
+  const statusMap: Record<string, PaymentStatus> = {
+    'COMPLETED': 'completed',
+    'PENDING': 'pending',
+    'FAILED': 'failed',
+    'REFUNDED': 'refunded'
+  };
+
+  return {
+    id: payment.PAYMENT_CODE,
+    date: payment.PAYMENT_DATE.split('T')[0],
+    studentId: payment.STUDENT_CODE,
+    studentName: payment.STUDENT_NAME,
+    courseId: payment.CLASS_CODE,
+    courseName: payment.CLASS_NAME,
+    amount: payment.AMOUNT,
+    status: statusMap[payment.STATUS] || 'pending',
+    paymentMethod: methodMap[payment.PAYMENT_METHOD] || 'cash',
+    description: payment.DESCRIPTION,
+    receiptNumber: payment.RECEIPT_NUMBER || undefined,
+    paymentDetails: payment.PAYMENT_DETAILS || undefined,
+    createdBy: payment.CREATED_BY,
+    createdAt: new Date(payment.CREATED_AT),
+    updatedAt: payment.UPDATED_AT ? new Date(payment.UPDATED_AT) : undefined
+  };
+};
 
 // Payment status badge component
 const StatusBadge: React.FC<{ status: PaymentStatus }> = ({ status }) => {
@@ -153,13 +214,23 @@ const PaymentsManagement: React.FC = () => {
     const fetchPayments = async () => {
       try {
         setIsLoading(true);
-        // Simulate API call with mock data
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setPayments(mockPayments);
-        setFilteredPayments(mockPayments);
-      } catch (err) {
+        setError(null);
+        
+        // Fetch payments from API
+        const response = await apiClient.get('/payments');
+        
+        if (response.data.success && response.data.data) {
+          const normalizedPayments = response.data.data.map(normalizePayment);
+          setPayments(normalizedPayments);
+          setFilteredPayments(normalizedPayments);
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (err: any) {
         console.error('Error fetching payment data:', err);
-        setError('Không thể tải dữ liệu thanh toán. Vui lòng thử lại sau.');
+        setError(err.response?.data?.message || 'Không thể tải dữ liệu thanh toán. Vui lòng thử lại sau.');
+        setPayments([]);
+        setFilteredPayments([]);
       } finally {
         setIsLoading(false);
       }
