@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiClient } from '../../../services/auth';
 import {
   Award,
   BarChart,
@@ -249,25 +250,16 @@ const PerformanceReport: React.FC = () => {
     const fetchPerformanceData = async () => {
       try {
         setIsLoading(true);
-        // Simulate API call with mock data
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setPerformanceData(mockPerformanceData);
-        setFilteredData(mockPerformanceData);
+        
+        // Fetch performance reports from API
+        const response = await apiClient.get('/performance/reports');
+        setPerformanceData(response.data);
+        setFilteredData(response.data);
 
-        // Calculate stats
-        const avgScore = mockPerformanceData.reduce((sum, record) => sum + record.averageScore, 0) / mockPerformanceData.length;
-        const highPerforming = mockPerformanceData.filter(record => record.averageScore >= 85).length;
-        const lowPerforming = mockPerformanceData.filter(record => record.averageScore < 75).length;
-        const avgImprovement = mockPerformanceData.reduce((sum, record) => sum + record.improvementRate, 0) / mockPerformanceData.length;
-
-        setStats({
-          averageScore: parseFloat(avgScore.toFixed(1)),
-          totalCourses: mockPerformanceData.length,
-          highPerforming,
-          lowPerforming,
-          overallImprovement: parseFloat(avgImprovement.toFixed(1))
-        });
-      } catch (err) {
+        // Fetch summary statistics from API
+        const summaryResponse = await apiClient.get('/performance/summary');
+        setStats(summaryResponse.data);
+      } catch (err: any) {
         console.error('Error fetching performance data:', err);
         setError('Không thể tải dữ liệu hiệu suất. Vui lòng thử lại sau.');
       } finally {
@@ -318,9 +310,15 @@ const PerformanceReport: React.FC = () => {
     setCourseFilter('');
   };
 
-  const handleViewDetails = (recordId: string) => {
-    setSelectedRecord(mockCoursePerformance[recordId]);
-    setShowDetails(true);
+  const handleViewDetails = async (recordId: string) => {
+    try {
+      const response = await apiClient.get(`/performance/reports/${recordId}`);
+      setSelectedRecord(response.data);
+      setShowDetails(true);
+    } catch (err: any) {
+      console.error('Error fetching performance details:', err);
+      setError('Không thể tải chi tiết hiệu suất');
+    }
   };
 
   const handleCloseDetails = () => {

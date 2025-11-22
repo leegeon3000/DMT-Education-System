@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
+import { apiClient } from '../../../services/auth';
 import { Users, TrendingUp, DollarSign, Target, FileSpreadsheet, FileText } from 'lucide-react';
 
 interface AnalyticsData {
@@ -111,71 +112,12 @@ const Analytics: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock analytics data
-      const mockData: AnalyticsData = {
-        userStats: {
-          totalUsers: 1247,
-          activeUsers: 856,
-          newUsers: 45,
-          teacherCount: 89,
-          studentCount: 1098,
-          staffCount: 60,
-          userGrowth: [
-            { month: 'T1', count: 950 },
-            { month: 'T2', count: 1020 },
-            { month: 'T3', count: 1150 },
-            { month: 'T4', count: 1200 },
-            { month: 'T5', count: 1247 }
-          ]
-        },
-        courseStats: {
-          totalCourses: 156,
-          activeCourses: 142,
-          completionRate: 78.5,
-          popularCourses: [
-            { name: 'Toán 9', students: 245 },
-            { name: 'Văn 8', students: 198 },
-            { name: 'Tiếng Anh 7', students: 167 },
-            { name: 'Lý 10', students: 134 },
-            { name: 'Hóa 11', students: 112 }
-          ],
-          completionTrend: [
-            { month: 'T1', rate: 72.3 },
-            { month: 'T2', rate: 75.1 },
-            { month: 'T3', rate: 76.8 },
-            { month: 'T4', rate: 77.9 },
-            { month: 'T5', rate: 78.5 }
-          ]
-        },
-        revenueStats: {
-          totalRevenue: 2450000000, // VND
-          monthlyRevenue: 485000000,
-          revenueGrowth: 12.3,
-          paymentMethods: [
-            { method: 'Chuyển khoản', percentage: 45 },
-            { method: 'Ví điện tử', percentage: 35 },
-            { method: 'Thẻ tín dụng', percentage: 15 },
-            { method: 'Tiền mặt', percentage: 5 }
-          ],
-          revenueByMonth: [
-            { month: 'T1', amount: 420000000 },
-            { month: 'T2', amount: 445000000 },
-            { month: 'T3', amount: 460000000 },
-            { month: 'T4', amount: 475000000 },
-            { month: 'T5', amount: 485000000 }
-          ]
-        },
-        systemStats: {
-          uptime: 99.8,
-          activeConnections: 2847,
-          serverLoad: 65.4,
-          errorRate: 0.02,
-          responseTime: 234,
-          storageUsed: 67.8
-        }
-      };
-
-      setData(mockData);
+      // Fetch analytics data from API
+      const response = await apiClient.get('/analytics', {
+        params: { time_range: timeRange }
+      });
+      
+      setData(response.data);
     } catch (err: any) {
       setError(err.message || 'Không thể tải dữ liệu thống kê');
     } finally {

@@ -14,6 +14,7 @@ import {
   Filter,
   Search
 } from 'lucide-react';
+import { apiClient } from '../../../services/auth';
 import { adminService } from '../../../services/admin';
 
 // Types
@@ -228,19 +229,25 @@ const AttendanceReport: React.FC = () => {
     const fetchAttendanceData = async () => {
       try {
         setIsLoading(true);
-        // Simulate API call with mock data
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setAttendanceData(mockAttendanceData);
-        setFilteredData(mockAttendanceData);
+        
+        // Fetch attendance reports from API
+        const response = await apiClient.get('/attendance/reports');
+        const reports = response.data;
+        
+        setAttendanceData(reports);
+        setFilteredData(reports);
 
         // Calculate stats
-        const avgAttendance = mockAttendanceData.reduce((sum, record) => sum + record.attendanceRate, 0) / mockAttendanceData.length;
-        const highAttendance = mockAttendanceData.filter(record => record.attendanceRate >= 90).length;
-        const lowAttendance = mockAttendanceData.filter(record => record.attendanceRate < 75).length;
+        const avgAttendance = reports.reduce((sum: number, record: AttendanceRecord) => 
+          sum + record.attendanceRate, 0) / (reports.length || 1);
+        const highAttendance = reports.filter((record: AttendanceRecord) => 
+          record.attendanceRate >= 90).length;
+        const lowAttendance = reports.filter((record: AttendanceRecord) => 
+          record.attendanceRate < 75).length;
 
         setStats({
           averageAttendance: parseFloat(avgAttendance.toFixed(2)),
-          totalClasses: mockAttendanceData.length,
+          totalClasses: reports.length,
           highAttendanceClasses: highAttendance,
           lowAttendanceClasses: lowAttendance
         });
@@ -295,9 +302,17 @@ const AttendanceReport: React.FC = () => {
     setCourseFilter('');
   };
 
-  const handleViewDetails = (recordId: string) => {
-    setSelectedRecord(mockAttendanceDetails[recordId]);
-    setShowDetails(true);
+  const handleViewDetails = async (recordId: string) => {
+    try {
+      // Extract session ID from recordId (format: ATT-{sessionId})
+      const sessionId = recordId.replace('ATT-', '');
+      const response = await apiClient.get(`/attendance/reports/${sessionId}`);
+      setSelectedRecord(response.data);
+      setShowDetails(true);
+    } catch (error) {
+      console.error('Error fetching attendance details:', error);
+      alert('Không thể tải chi tiết điểm danh');
+    }
   };
 
   const handleCloseDetails = () => {
