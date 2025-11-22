@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiClient } from '../../../services/auth';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
@@ -99,74 +100,10 @@ const Settings: React.FC = () => {
   const loadSettings = async () => {
     try {
       setLoading(true);
-      // Mock data since API might not be ready
-      const mockSettings: SystemSettings = {
-        general: {
-          siteName: 'DMT Education System',
-          siteDescription: 'Hệ thống quản lý giáo dục trực tuyến',
-          adminEmail: 'admin@dmtedu.com',
-          timezone: 'Asia/Ho_Chi_Minh',
-          language: 'vi',
-          maintenanceMode: false,
-          registrationEnabled: true
-        },
-        security: {
-          twoFactorAuth: true,
-          sessionTimeout: 30,
-          maxLoginAttempts: 5,
-          passwordPolicy: {
-            minLength: 8,
-            requiresSpecialChar: true,
-            requiresNumber: true,
-            requiresUppercase: true,
-            requiresLowercase: true
-          },
-          ipWhitelist: ['192.168.1.0/24', '10.0.0.0/16'],
-          rateLimiting: {
-            enabled: true,
-            maxRequests: 100,
-            timeWindow: 60
-          }
-        },
-        email: {
-          smtpHost: 'smtp.gmail.com',
-          smtpPort: 587,
-          smtpUser: 'noreply@dmtedu.com',
-          smtpPassword: '********',
-          fromEmail: 'noreply@dmtedu.com',
-          fromName: 'DMT Education',
-          encryption: 'tls'
-        },
-        payment: {
-          currency: 'VND',
-          taxRate: 10,
-          paymentMethods: {
-            vnpay: true,
-            momo: true,
-            banking: true,
-            cash: false
-          },
-          autoReminder: true,
-          reminderDays: 7
-        },
-        notification: {
-          emailNotifications: true,
-          smsNotifications: true,
-          pushNotifications: true,
-          defaultLanguage: 'vi',
-          batchSize: 100,
-          retryAttempts: 3
-        },
-        storage: {
-          maxFileSize: 10,
-          allowedFileTypes: ['pdf', 'doc', 'docx', 'jpg', 'png', 'mp4'],
-          storageQuota: 100,
-          backupFrequency: 'daily',
-          backupRetention: 30
-        }
-      };
       
-      setSettings(mockSettings);
+      // Fetch settings from API
+      const response = await apiClient.get('/settings');
+      setSettings(response.data);
     } catch (err: any) {
       setError(err.message || 'Không thể tải cài đặt hệ thống');
     } finally {
@@ -179,10 +116,16 @@ const Settings: React.FC = () => {
     
     try {
       setSaving(true);
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      // Here you would call your API to save settings
-      console.log('Settings saved:', settings);
+      
+      // Convert settings object to flat array for API
+      const settingsArray: Array<{category: string; key: string; value: any}> = [];
+      Object.entries(settings).forEach(([category, categorySettings]) => {
+        Object.entries(categorySettings).forEach(([key, value]) => {
+          settingsArray.push({ category: category.toUpperCase(), key, value });
+        });
+      });
+      
+      await apiClient.put('/settings', { settings: settingsArray });
     } catch (err: any) {
       setError(err.message);
     } finally {

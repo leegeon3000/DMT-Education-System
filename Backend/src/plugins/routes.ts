@@ -16,6 +16,7 @@ import financeSqlServerRoutes from '../routes/finance-sqlserver.js'; // SQL Serv
 import attendanceReportRoutes from '../routes/attendance-report-sqlserver.js'; // SQL Server version
 import analyticsRoutes from '../routes/analytics-sqlserver.js'; // SQL Server version
 import performanceRoutes from '../routes/performance-sqlserver.js'; // SQL Server version
+import settingsRoutes from '../routes/settings-sqlserver.js'; // SQL Server version
 import { surveysRoutes } from '../routes/surveys';
 import staffSqlServerRoutes from '../routes/staff-sqlserver.js'; // SQL Server version
 import { newsRoutes } from '../routes/news';
@@ -49,6 +50,7 @@ export default async function registerRoutes(app: FastifyInstance) {
   await app.register(attendanceReportRoutes, { prefix: '/api' });  // Attendance Reports - SQL Server
   await app.register(analyticsRoutes, { prefix: '/api' });  // Analytics - SQL Server
   await app.register(performanceRoutes, { prefix: '/api' });  // Performance - SQL Server
+  await app.register(settingsRoutes, { prefix: '/api' });  // Settings - SQL Server
   await reportsRoutes(app);      // Uses sp_GetSystemOverview, sp_GetStudentReport, sp_GetClassReport
   
   // New advanced routes - ACTIVE FOR SQL SERVER
