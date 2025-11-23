@@ -76,6 +76,7 @@ import Roles from '../features/admin/pages/Roles';
 import Settings from '../features/admin/pages/Settings';
 import Notifications from '../features/admin/pages/Notifications';
 import FinanceReport from '../features/admin/pages/FinanceReport';
+import BackupRestore from '../features/admin/pages/BackupRestore';
 
 // New notification page
 import NotificationsPage from '../pages/NotificationsPage';
@@ -164,6 +165,7 @@ const AppRoutes = () => {
         <Route path="surveys" element={<div>Quản lý khảo sát</div>} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="roles" element={<Roles />} />
+        <Route path="backup" element={<BackupRestore />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 

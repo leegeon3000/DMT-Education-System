@@ -17,6 +17,7 @@ import attendanceReportRoutes from '../routes/attendance-report-sqlserver.js'; /
 import analyticsRoutes from '../routes/analytics-sqlserver.js'; // SQL Server version
 import performanceRoutes from '../routes/performance-sqlserver.js'; // SQL Server version
 import settingsRoutes from '../routes/settings-sqlserver.js'; // SQL Server version
+import backupSqlServerRoutes from '../routes/backup-sqlserver.js'; // SQL Server version
 import { surveysRoutes } from '../routes/surveys';
 import staffSqlServerRoutes from '../routes/staff-sqlserver.js'; // SQL Server version
 import { newsRoutes } from '../routes/news';
@@ -25,7 +26,6 @@ import { notificationsRoutes } from '../routes/notifications';
 import { statisticsRoutes } from '../routes/statistics';
 import { activityLogsRoutes } from '../routes/activity-logs';
 import { systemSettingsRoutes } from '../routes/system-settings';
-import { backupRoutes } from '../routes/backup';
 import contactRoutes from '../routes/contact.js';
 
 export default async function registerRoutes(app: FastifyInstance) {
@@ -51,6 +51,7 @@ export default async function registerRoutes(app: FastifyInstance) {
   await app.register(analyticsRoutes, { prefix: '/api' });  // Analytics - SQL Server
   await app.register(performanceRoutes, { prefix: '/api' });  // Performance - SQL Server
   await app.register(settingsRoutes, { prefix: '/api' });  // Settings - SQL Server
+  // await app.register(backupSqlServerRoutes, { prefix: '/api' });  // Backup & Restore - TEMPORARILY DISABLED
   await reportsRoutes(app);      // Uses sp_GetSystemOverview, sp_GetStudentReport, sp_GetClassReport
   
   // New advanced routes - ACTIVE FOR SQL SERVER
@@ -58,7 +59,6 @@ export default async function registerRoutes(app: FastifyInstance) {
   await statisticsRoutes(app);      // Uses database functions (fn_GetAttendanceRate, fn_GetAverageGrade, etc.)
   await activityLogsRoutes(app);    // Activity logging and tracking
   await systemSettingsRoutes(app);  // System settings management (Admin)
-  await backupRoutes(app);          // Database backup/restore (Admin)
   
   // User management routes - ACTIVE FOR SQL SERVER
   await usersRoutes(app);
