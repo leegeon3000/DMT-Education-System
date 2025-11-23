@@ -20,7 +20,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import { PaymentTransaction, PaymentStatus, PaymentMethod } from '../../../types';
-import apiClient from '../../../services/api';
+import { apiClient } from '../../../services/auth';
 
 // Interface for API response
 interface PaymentFromAPI {
