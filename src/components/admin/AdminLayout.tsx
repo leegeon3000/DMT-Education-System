@@ -15,7 +15,8 @@ import {
   X,
   User,
   ChevronDown,
-  Home
+  Home,
+  Database
 } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import { NotificationBell } from '../notifications';
@@ -88,6 +89,12 @@ const AdminLayout: React.FC = () => {
       href: '/admin/reports/attendance',
       icon: FileText,
       current: location.pathname.includes('/admin/reports')
+    },
+    {
+      name: 'Backup & Restore',
+      href: '/admin/backup',
+      icon: Database,
+      current: location.pathname.includes('/admin/backup')
     },
     {
       name: 'Cài đặt',
